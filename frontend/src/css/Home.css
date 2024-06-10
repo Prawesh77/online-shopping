@@ -1,0 +1,76 @@
+/* .homee{
+    display: flex;
+    flex:1;
+    position: relative;
+}
+ 
+// paila left maa Hello ani right maa welcome huda,
+// how to translate text to the middle 
+.left{
+    width: 50vw;
+    height: calc(100vh - 60px);
+    background-color: rgb(60, 189, 129);
+    position: relative;
+}
+.txt1{
+    position: absolute;
+    top: 35vh;
+    right:0;
+    transform: translateX(50%);
+    z-index: 10;
+    font-size: 25px;
+    font-weight: 800;
+}
+.right{
+    width: 50vw;
+    height: calc(100vh - 60px);
+    background-color: rgb(131, 235, 192);
+    position: relative;
+}
+
+.txt2{
+    position: absolute;
+    top: 44vh;
+    z-index: 10;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: 800;
+
+}
+ */
+
+ .homee {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    height: 87vh;
+    background-color: #f5f5f5;
+    text-align: center; 
+  }
+  
+  .homee .txt1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin: 0;
+    font-weight: bold;
+  }
+  
+  .homee .txt2 {
+    font-size: 2rem;
+    color: #666;
+    margin: 1rem 0 0 0;
+  }
+  
+
+  .homee .admin-badge {
+    background-color: #ff4757;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }

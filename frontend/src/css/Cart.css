@@ -1,0 +1,77 @@
+.cart-table {
+    width: 90vw;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+  }
+  
+  .cart-table th,
+  .cart-table td {
+    padding: 15px;
+    border: 1px solid #ddd;
+  }
+  
+  .cart-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+  }
+  
+  .no-products {
+    text-align: center;
+    font-weight: bold;
+    color: #ccc;
+  }
+  
+  .quantity {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .quantity-button {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #eee;
+  }
+  
+  .quantity-button:hover {
+    background-color: #ddd;
+  }
+  
+  .quantity-input {
+    width: 30px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+  }
+  
+  .total {
+    text-align: right;
+    font-weight: bold;
+  }
+  
+  .cart-total {
+    font-size: 1.2rem;
+  }
+  
+  .actions {
+    text-align: center;
+  }
+  
+  .remove-button {
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    background-color: #e03030;
+    color: #fff;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  
+  .remove-button:hover {
+    background-color: #c02020;
+  }
