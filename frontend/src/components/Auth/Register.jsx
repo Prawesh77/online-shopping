@@ -15,7 +15,8 @@ function Register({ toggleForm }) {
         userName:'',
         address: '',
         email: '',
-        password: ''
+        password: '',
+        file:{}
     });
     const registerRef= useRef();
 
@@ -37,26 +38,41 @@ function Register({ toggleForm }) {
             }));
           }
       };
-      const handleSubmit = async (e) => {
-          e.preventDefault();
-          console.log(formData);
-          
-          try {
-            await dispatch(registerUser(formData));
-            alert("User Registered");
-            toggleForm();
-          } catch (error) {
-            console.error('Registration error:', error);
-          }
-        };
-
 
 const closeModal=(e)=>{
   if(registerRef.current === e.target){
     toggleForm();
   }
 }
+const handleFileChange = (e) => {
+  setFormData((prevProduct) => ({
+    ...prevProduct,
+    file: e.target.files[0],
+  }));
+};
 
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log(formData);
+  //file bhako bhayera yesaro pathako natra sidai dispatch gardiye hunxa formdata halera
+  const Creds = new FormData();
+  Creds.append('userName', formData.userName);
+  Creds.append('password', formData.password);
+  Creds.append('email', formData.email);
+  Creds.append('address', formData.address);
+  Creds.append('image', formData.file);
+  Creds.append('name[firstName]', formData.name.firstName);
+  Creds.append('name[middleName]', formData.name.middleName);
+  Creds.append('name[lastName]', formData.name.lastName)
+  
+  try {
+    console.log(Creds);
+    await dispatch(registerUser(Creds));
+    toggleForm();
+  } catch (error) {
+    console.error('Registration error:', error);
+  }
+};
 
     return (
       <div className="registerpopup" ref={registerRef} onClick={closeModal}>
@@ -69,7 +85,6 @@ const closeModal=(e)=>{
             placeholder="First Name*"
             required
             name="name.firstName"
-            value={formData.name.firstName}
             onChange={handleChange}
           />
           <input
@@ -77,7 +92,6 @@ const closeModal=(e)=>{
             className="form fname"
             placeholder="Middle Name"
             name="name.middleName"
-            value={formData.middleName}
             onChange={handleChange}
           />
           <input
@@ -86,7 +100,6 @@ const closeModal=(e)=>{
             placeholder="Last Name*"
             required
             name="name.lastName"
-            value={formData.lastName}
             onChange={handleChange}
           />
           <br />
@@ -95,7 +108,6 @@ const closeModal=(e)=>{
             className="form username"
             placeholder="username"
             name="userName"
-            value={formData.userName}
             onChange={handleChange}
           />
           <br />
@@ -104,7 +116,6 @@ const closeModal=(e)=>{
             className="form address"
             placeholder="Address"
             name="address"
-            value={formData.address}
             onChange={handleChange}
           />
           <br />
@@ -115,7 +126,6 @@ const closeModal=(e)=>{
             placeholder="E-mail*"
             required
             name="email"
-            value={formData.email}
             onChange={handleChange}
           />
           <br />
@@ -126,9 +136,10 @@ const closeModal=(e)=>{
             placeholder="Password*"
             required
             name="password"
-            value={formData.password}
             onChange={handleChange}
           />
+          <label >Upload Profile Image</label>
+          <input type='file' className='profile_img_upload' onChange={handleFileChange}></input>
           <br />
           <input type="submit" className="submit-button"></input>
           <p className="form_msg">

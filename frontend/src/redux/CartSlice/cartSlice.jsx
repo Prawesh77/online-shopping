@@ -3,6 +3,7 @@ import cartAPI from './cartAPI';
 // Define the initial state for the cart
 const initialState = {
   cart: { products: [] },
+  cart1:{products:[]},
   loading: false,
   status: 'idle',
   error: null,
@@ -26,7 +27,7 @@ export const loadCartAsync = createAsyncThunk(
   'cart/loadCart',
   async (payload, thunkAPI) => {
     try {
-      console.log("From loadCartAsync")
+      // console.log("From loadCartAsync")
       const response = await cartAPI.loadCart(payload);
       return response.data;
     } catch (error) {
@@ -52,6 +53,7 @@ const cartSlice = createSlice({
       .addCase(addToCartAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.cart = action.payload;
+        console.log(state.cart);
       })
       .addCase(addToCartAsync.rejected, (state, action) => {
         state.loading = false;
@@ -66,7 +68,7 @@ const cartSlice = createSlice({
         state.loading = false;
         state.status = 'succeeded';
         state.cart = action.payload;
-        // console.log(state.cart);
+        console.log(state.cart);
 
       })
       .addCase(loadCartAsync.rejected, (state, action) => {

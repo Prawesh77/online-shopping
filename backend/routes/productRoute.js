@@ -1,8 +1,11 @@
 const express = require('express');
 const app = express.Router();
 const Product = require('../models/product');
-// const { exit } = require('process');
+const multer = require('multer');
+const path = require('path');
 
+app.use(express.json());
+app.use(express.static('public'));
 //API endpoints
 
 app.get('/', async (req, res) => {
@@ -30,13 +33,37 @@ app.get('/:id', async (req, res) => {
     }
   });
 
-  app.post('/addnewproduct', async (req, res) => {
-    const { category, details:{name, brand, price, size, watt, description}, instock } = req.body;
+
+
+
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'public/images'); // Save images in public/uploads
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + path.extname(file.originalname)); // Append current timestamp to filename
+    },
+  });
+  
+  const upload = multer({ storage: storage });
+
+
+  app.post('/addnewproduct',upload.single('image'), async (req, res) => {
+    console.log(req);
+    // const { category, details:{name, brand, price, size, watt, description}, instock } = req.body;
+    const { category, details, instock } = req.body; //file nabhaye mathi ko jasari
+    const parsedDetails = typeof details === 'string' ? JSON.parse(details) : details; // file handle garera pathauda string jasto aauxa so parse it
+    const { name, brand, price, size, watt, description } = parsedDetails;
+    
+    console.log(req.file);
+    const imageUrl = req.file ? `/images/${req.file.filename}` : '';
+
     try {
       let product = await Product.findOne({ 'details.name': name, 'details.brand': brand });
 
         if (product) {
             product.instock += Number(instock);
+            product.imageurl = imageUrl;  
             // Aru pani change garna parey tala ko code
             // product.details.price = price;
             // product.details.size = size;
@@ -46,7 +73,8 @@ app.get('/:id', async (req, res) => {
             product = new Product({
                 category,
                 details: { name, brand, price, size, watt, description },
-                instock:Number(instock)
+                instock:Number(instock),
+                imageurl: imageUrl,
             });
         }
         await product.save();

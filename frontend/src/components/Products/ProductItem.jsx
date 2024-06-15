@@ -6,18 +6,21 @@ import { addToCartAsync } from '../../redux/CartSlice/cartSlice';
 
 
 function ProductItem({ product }){
+  // console.log(product.imageurl);
   const userid= useSelector((state)=>state.user.userid)
   const isLoggedIn = useSelector((state)=> state.user.isLoggedIn);
   const dispatch = useDispatch();
 
+  if (typeof product !== 'object' || product === null) {
+    console.error('Invalid product:', product);
+    return <div>Invalid product data</div>;
+  }
 
   const handleCartClick=async()=>{
 
     //database maa add garya
-    console.log("To be dispatched")
     const payload={userId: userid, productid:product._id}  
     await dispatch(addToCartAsync(payload)); //addToCartAsync ley db maa add, loadToCartAsync ley db bata load
-    console.log("dispatched")
   }
     return(
       <div className="maincomp" >
@@ -26,7 +29,7 @@ function ProductItem({ product }){
            <i className="bx bx-cart-add cart" onClick={handleCartClick}></i>
             }
             <img
-              src="./images/electra.png"
+              src={`http://localhost:5000/public${product.imageurl}`}
               alt="electra 3 pin top"
               className="product_img"
             />

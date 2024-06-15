@@ -39,10 +39,8 @@ const productSlice = createSlice({
       .addCase(addProduct.pending, (state) => {
         state.status = 'adding';
       })
-      .addCase(addProduct.fulfilled, (state, action) => {
+      .addCase(addProduct.fulfilled, (state) => {
         state.status = 'succeeded';
-        state.products.push(action.payload);
-        console.log(state.products);
       })
       .addCase(addProduct.rejected, (state, action) => {
         state.status = 'failed';

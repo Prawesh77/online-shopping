@@ -14,7 +14,7 @@ const AdminRoute = ({children}) => {
   return children;
 };
 AdminRoute.propTypes = {
-    children: PropTypes.component
+    children: PropTypes.node.isRequired
   };
 
 export default AdminRoute;

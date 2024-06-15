@@ -5,10 +5,16 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
   }
-  
+  .cart-table .product-image{
+    width: 130px;
+    height: 100px;
+    object-fit:cover;
+    
+  } 
+
   .cart-table th,
   .cart-table td {
-    padding: 15px;
+    padding: 3px;
     border: 1px solid #ddd;
   }
   
@@ -31,6 +37,7 @@
   
   .quantity-button {
     padding: 5px 10px;
+    margin: auto 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
     cursor: pointer;
@@ -42,7 +49,7 @@
   }
   
   .quantity-input {
-    width: 30px;
+    width: 50px;
     text-align: center;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -50,8 +57,9 @@
   }
   
   .total {
-    text-align: right;
+    text-align: center;
     font-weight: bold;
+    width: 10vw;
   }
   
   .cart-total {

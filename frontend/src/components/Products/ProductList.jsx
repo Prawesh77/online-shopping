@@ -17,6 +17,7 @@ const ProductList = () => {
     maxPrice: 10000,
   });
 
+
   useEffect(() => {
     let filtered = products;
 

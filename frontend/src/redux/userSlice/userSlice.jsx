@@ -17,6 +17,7 @@ const getInitialState = () => {
     if (token) {
         try {
             const decodedToken = jwtDecode(token);
+            console.log(decodedToken);
             return {
                 token: token,
                 userid: decodedToken.userid,
@@ -25,6 +26,7 @@ const getInitialState = () => {
                 error: null,
                 isLoggedIn: true,
                 isAdmin: decodedToken.isAdmin,
+                imageurl: decodedToken.imageurl
             };
         } catch (error) {
             console.error('Error decoding token:', error);
@@ -38,6 +40,7 @@ const getInitialState = () => {
         error: null,
         isLoggedIn: false,
         isAdmin: false,
+        imageurl: null
     };
 };
 
@@ -66,6 +69,7 @@ const userSlice = createSlice({
                         const decodedToken = jwtDecode(token);
                         state.userName=decodedToken.username;
                         state.isAdmin=decodedToken.isAdmin;
+
                         console.log(state.userName);
                     }catch(error){
                         console.error('Error decoding token:', error);

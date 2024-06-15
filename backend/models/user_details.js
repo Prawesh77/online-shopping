@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema({
     address: {type: String},
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    isAdmin:{type: Boolean, default: false}
+    isAdmin:{type: Boolean, default: false},
+    imageurl: {type: String}
   },
   {
     timestamps: true,

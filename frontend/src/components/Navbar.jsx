@@ -1,32 +1,52 @@
 import { Link } from "react-router-dom";
 import "../css/Navbar.css"; 
 import {logout} from "../redux/userSlice/userSlice"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 
 const Navbar = () => {
   const dispatch= useDispatch();
+  const [isDarkMode, setIsDarkMode]=useState(true);
+  const [showUserInfo, setShowUserInfo] = useState(false);
+  const [navbarHeight, setNavbarHeight] = useState(0);
+  const [cartnum, setCartNum]=useState(0)
+  const navbarRef = useRef(null);
+
+  useEffect(() => {
+    if (navbarRef.current) {
+      const height = navbarRef.current.getBoundingClientRect().height;
+      setNavbarHeight(height);
+    }
+  }, []);
+
+  const cartProducts = useSelector((state) => state.cart.cart.products);
   const isLoggedIn= useSelector((state)=> state.user.isLoggedIn);
   const userName = useSelector((state)=> state.user.userName);
-
+  const imageurl= useSelector((state)=> state.user.imageurl);
+  console.log(imageurl);
   const handleLogout=()=>{
     dispatch(logout());
     window.location.href = './login'
   };
-
-  const [cartnum, setCartNum]=useState(1)
-  const cartProducts = useSelector((state) => state.cart.cart);
   
   useEffect(()=>{
-    setCartNum(cartProducts.products.length);
+    setCartNum(cartProducts.length);
   })
 
+ const toggleDarkMode=()=>{
+  setIsDarkMode((prevMode)=> !prevMode);
+  document.body.classList.toggle('dark_mode');
 
+ }
 
+ const handleImageClick = () => {
+  setShowUserInfo(!showUserInfo);
+};
+console.log(`http://localhost:5000/public${imageurl} `);
   return (
-    <div className="navbar">
-        <img src="./images/thops.png" alt="thops" className="brand" />
+    <div className="navbar" ref={navbarRef}>
+        <img src="http://localhost:5000/public/thops.png" alt="thops" className="brand" />
           {!isLoggedIn ? (
             <div className="in_navbar">
             <div className="links">
@@ -41,6 +61,9 @@ const Navbar = () => {
                 Login
               </Link>
             </div>
+            <button onClick={toggleDarkMode}>
+              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+            </button>
           </div>
           ) : (
             <div className="in_navbar">
@@ -52,16 +75,43 @@ const Navbar = () => {
                 Products
               </Link>
               </div>
-              <p className="your_name">{userName?userName:"no username"}</p>
-              <button onClick={handleLogout} className="logout_link">
-                Logout
-              </button>
+
+              {/* <p className="your_name">{userName?userName:"no username"}</p>
+                  <button onClick={handleLogout} className="logout_link">
+                    Logout
+                  </button> */}
+
+                <img 
+                        src={`http://localhost:5000/public${imageurl} `}
+                        alt="thops" 
+                        className="profilepic" 
+                        onClick={handleImageClick} 
+                      />
+
+                      {showUserInfo && (
+                        <div className={`user_info ${showUserInfo ? 'active' : ''}`} 
+                        style={{ top: `${navbarHeight}px` }}>
+                          <p className="your_name">{userName ? userName : "no username"}</p>
+                          <button onClick={handleLogout} className="logout_link">
+                            Logout
+                          </button>
+                        </div>
+                      )}
+
+                            
               <div className="for_cart">
               <Link to="/cart" >
                 <i className='bx bx-cart-add nav_cart'></i>
-              </Link>     
-              <p className="cart_num">{cartnum}</p>
+              </Link>    
+              {
+                cartnum===0? 
+                <p className="cart_num_none"></p> :
+                <p className="cart_num">{cartnum}</p>
+              } 
               </div>
+              <button onClick={toggleDarkMode}>
+              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+            </button>
           </div>
           ) }
       </div>

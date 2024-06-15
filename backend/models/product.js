@@ -13,6 +13,7 @@ const productSchema = new mongoose.Schema({
         description: { type: String }
     },    
     instock: { type: Number, required: true },
+    imageurl: {type: String}
 });
 
 module.exports = mongoose.model('Product', productSchema); // Export the model

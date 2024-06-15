@@ -4,3 +4,46 @@
     box-sizing: border-box;
     text-decoration: none;
   }
+
+  :root {
+    --white: #ffffff;
+    --black: #333;
+    --grey: #666;
+
+    --navbar-bg-color: #178551;          /* Navbar background color */
+    --navbar-text-color: white;          /* Navbar text color */
+    --navbar-link-hover-color: rgb(146, 211, 146); /* Navbar link hover color */
+    --login-btn-bg-color: #4CAF50;       /* Login button background color */
+    --login-btn-hover-color: #45a049;    /* Login button hover background color */
+    --your-name-color: #ddd;             /* Your name text color */
+    --logout-btn-bg-color: #f44336;      /* Logout button background color */
+    --logout-btn-hover-color: #e31e12;   /* Logout button hover background color */
+    --cart-icon-bg-color: rgb(28, 53, 30); /* Cart icon background color */
+    --cart-num-bg-color: #e31e12;        /* Cart number background color */
+    --cart-num-text-color: white;
+
+    --home-admin-badge-bg: #ff4757;
+
+    --filter-bg: #eee;
+
+  }
+
+  .dark_mode{
+    --white: #4b4b4b;
+    --black: #cccccc;
+    --grey: #a7a7a7;
+
+    --navbar-bg-color: #0f4c2d;           /* Navbar background color */
+    --navbar-text-color: white;            /* Navbar text color */
+    --navbar-link-hover-color: #92d392;    /* Navbar link hover color */
+    --login-btn-bg-color: #3d8f3b;         /* Login button background color */
+    --login-btn-hover-color: #368e41;      /* Login button hover background color */
+    --your-name-color: #aaa;               /* Your name text color */
+    --logout-btn-bg-color: #a6342f;        /* Logout button background color */
+    --logout-btn-hover-color: #9e1f29;     /* Logout button hover background color */
+    --cart-icon-bg-color: #1c351e;         /* Cart icon background color */
+    --cart-num-bg-color: #9e1f29;          /* Cart number background color */
+    --cart-num-text-color: white;          /* Cart number text color */
+
+    --filter-bg: #ddd;
+  }

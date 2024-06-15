@@ -1,49 +1,37 @@
-import { useEffect, useState,useMemo } from "react";
+import { useEffect} from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import { loadCartAsync, addToCartAsync } from "../../redux/CartSlice/cartSlice";
 import "../../css/Cart.css";
 
 const Cart = () => {
-  const [quantities, setQuantities] = useState({});
+
   const dispatch = useDispatch();
   const userID = useSelector((state) => state.user.userid);
-  const productLists = useSelector((state) => state.product.products);
-  console.log("Hello from cart.jsx");
  
 
   const dispatched=(userID)=>{dispatch(loadCartAsync(userID)); }
   useEffect(()=>{
     dispatched(userID);
-    console.log("Hello");
   },[userID])
 
 
-  const cartProducts = useSelector((state) => state.cart.cart);
-  const combinedProducts = useMemo(() => {
-    return cartProducts.products?.map((cartProduct) => {
-      const matchingProduct = productLists.find(
-        (product) => product._id === cartProduct.productId
-      );
-      return matchingProduct ? { ...cartProduct, ...matchingProduct } : null;
-    }).filter(Boolean);
-  }, [cartProducts, productLists]);
-
-  useEffect(() => {
-    if (combinedProducts) {
-      const initialQuantities = {};
-      combinedProducts.forEach(product => {
-        initialQuantities[product.productId] = 0;
-      });
-      setQuantities(initialQuantities);
-      console.log(combinedProducts);
-    }
-  }, [combinedProducts]);
+  const cartProducts = useSelector((state) => state.cart.cart.products);
+  console.log(cartProducts);
+  console.log(typeof (cartProducts));
 
 
-  const handleIncrement=async(pid)=>{
+// Calculate total price
+const totalPrice = cartProducts.reduce((acc, product) => {
+  return acc + product.details.details.price * product.quantity;
+}, 0);
+
+  const handleIncrement=async(pid, instock, quantity)=>{
     const payload={userId: userID, productid:pid}  
-    await dispatch(addToCartAsync(payload));
+    if(quantity<instock){
+      await dispatch(addToCartAsync(payload));
+    }
+    console.log(cartProducts);
   }
   const handleDecrement=async(pid)=>{
     const payload={userId: userID, productid:pid, quantity: -1}  
@@ -59,43 +47,69 @@ const Cart = () => {
     <table className="cart-table">
       <thead>
         <tr>
+          <th className="product">Visual</th>
           <th className="product-id">Product Name</th>
           <th className="product">Brand</th>
           <th className="product">Price</th>
           <th className="quantity">Quantity</th>
           <th></th>
-          <th>Total </th>
+          <th>Total</th>
         </tr>
       </thead>
       <tbody>
-        
-        {cartProducts && cartProducts.products ?combinedProducts.map((product) => (
+        {cartProducts && cartProducts.length > 0 ? cartProducts.map((product) => (
           <tr key={product.productId} className="cart-item">
-            <td>{product.details.name}</td>
-            <td>{product.details.brand}</td>
-            <td>{product.details.price}</td>
+            <td>
+              <img
+                src={`http://localhost:5000/public${product.details.imageurl}`}
+                alt={product.details.details.name}
+                className="product-image"
+              />
+            </td>
+            <td>{product.details.details.name}</td>
+            <td>{product.details.details.brand}</td>
+            <td>{product.details.details.price.toFixed(2)}</td>
             <td>{product.quantity}</td>
             <td>
-                <button  className="quantity-button" onClick={() => handleIncrement(product.productId)}>+</button>
-                <input value={quantities[product.productId]} className="quantity-input" />
-                <button  className="quantity-button" onClick={() => handleDecrement(product.productId)}>-</button>
-              </td>
-              <td>{product.details.price * product.quantity}</td>
-              <td>
-                <button className="remove-button" onClick={() => handleRemove(product.productId)}>
-                  Remove
-                </button>
-              </td>
+              <button
+                className="quantity-button"
+                onClick={() => handleIncrement(product.productId,product.details.instock,product.quantity)}
+              >
+                +
+              </button>
+              <input
+                type="Number"
+                min="1" max={product.details.instock}
+                value={product.quantity}
+                className="quantity-input"
+              />
+              <button
+                className="quantity-button"
+                onClick={() => handleDecrement(product.productId)}
+              >
+                -
+              </button>
+            </td>
+            <td>{(product.details.details.price * product.quantity).toFixed(2)}</td>
+            <td>
+              <button
+                className="remove-button"
+                onClick={() => handleRemove(product.productId)}
+              >
+                Remove
+              </button>
+            </td>
           </tr>
-        )):(
-          <tr>no product</tr>
+        )) : (
+          <tr>
+            <td colSpan="7">No products in the cart</td>
+          </tr>
         )}
       </tbody>
       <tfoot>
         <tr>
           <td colSpan="5">Total:</td>
-          <td className="cart-total"></td>
-          <td></td>
+          <td className="cart-total">{totalPrice.toFixed(2)}</td>
         </tr>
       </tfoot>
     </table>

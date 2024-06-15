@@ -17,7 +17,7 @@ app.post('/', async (req, res) => {
         if (!isMatch) {
             return res.status(400).send('Invalid credentials');
         }
-        const payload = { userid:user._id ,username: user.userName, isAdmin: user.isAdmin };
+        const payload = { userid:user._id ,username: user.userName, isAdmin: user.isAdmin, imageurl: user.imageurl };
         const token = jwt.sign(payload, 'your_jwt_secret', { expiresIn: '1h' });
         res.json({ token });
     } catch (error) {

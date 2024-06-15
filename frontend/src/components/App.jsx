@@ -13,7 +13,6 @@ import { fetchProducts } from "../redux/productSlice/productSlice";
 import { loadCartAsync } from "../redux/CartSlice/cartSlice";
 
 const App = () => {
-  console.log("main");
   const userID = useSelector((state) => state.user.userid);
 
   const dispatch = useDispatch();

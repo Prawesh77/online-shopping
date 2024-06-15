@@ -5,7 +5,8 @@
     grid-row-gap: 10px;
     padding: 15px;
     position: relative;
-    /* background-color: rgb(174, 236, 236); */
+    background-color: var(--white);
+    transition: all 0.3s ease-in-out;
 }
 box-icon{
     position: fixed;
@@ -85,7 +86,7 @@ box-icon{
 
 .maincomp:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 12px var(--black);
 }
 
 .cart {
@@ -226,15 +227,15 @@ box-icon{
     margin:0;
     padding: 0.5rem 1rem;
     border-radius: 5px;
-    background-color: #eee;
+    background-color: var(--filter-bg);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: all 0.2s ease-in-out;
   }
   
-  .filter-container:hover {
+  /* .filter-container:hover {
     background-color: #ddd;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  }
+  } */
   
   .filter-container select,
   .filter-container input[type="number"] {
