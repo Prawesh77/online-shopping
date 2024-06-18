@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import '../../css/SummaryProfile.css';
+
+import { useState } from 'react';
+import '../../css/OrderSummaryProfile.css';
 
 const OrderSummaryProfile = () => {
     const [orders, setOrders] = useState([
@@ -7,11 +8,10 @@ const OrderSummaryProfile = () => {
             id: 1,
             username: 'Prawesh',
             products: 'LED Bulb',
-            details:{
-                quantity:'',
-                color:'',
-                size:'',
-                
+            details: {
+                quantity: '',
+                color: '',
+                size: '',
             },
             state: {
                 pending: true,
@@ -21,8 +21,8 @@ const OrderSummaryProfile = () => {
         },
         {
             id: 2,
-            username: 'rajesh dai',
-            products: 'Smartphone ',
+            username: 'Rajesh Dai',
+            products: 'Smartphone',
             details: '',
             state: {
                 pending: true,
@@ -56,10 +56,25 @@ const OrderSummaryProfile = () => {
     const handleCompletedChange = (id, isChecked) => {
         setOrders(prevOrders =>
             prevOrders.map(order =>
-                order.id === id ? { ...order, state: { ...order.state, completed: isChecked } } : order
+                order.id === id ? {
+                    ...order,
+                    state: {
+                        ...order.state,
+                        completed: isChecked,
+                        dispatched: false,
+                        pending: !isChecked
+                    }
+                } : order
             )
         );
     };
+
+    const filteredOrders = orders.filter(order => {
+        if (filterType === 'dispatched') {
+            return order.state.dispatched && !order.state.completed;
+        }
+        return order.state[filterType];
+    });
 
     return (
         <div className="order-summary-container">
@@ -100,7 +115,7 @@ const OrderSummaryProfile = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {orders.filter(order => order.state[filterType]).map(order => (
+                    {filteredOrders.map(order => (
                         <tr key={order.id}>
                             <td>{order.username}</td>
                             <td>{order.products}</td>
