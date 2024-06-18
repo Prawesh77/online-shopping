@@ -4,7 +4,7 @@ import Home from './Home';
 import Signup from './Auth/Signup';
 import ProductList from './Products/ProductList';
 import Cart from './Cart/Cart';
-import AdminProfile from './Profile/AdminProfile';
+import Profile from './Profile/Profile';
 import "../css/App.css";
 import Addproductform from './Products/AddProductForm';
 import AdminRoute from './Protectedroutes/AdminRoute';
@@ -12,6 +12,7 @@ import { useSelector, useDispatch} from 'react-redux';
 import { useEffect } from "react";
 import { fetchProducts } from "../redux/productSlice/productSlice";
 import { loadCartAsync } from "../redux/CartSlice/cartSlice";
+import OrderSummaryProfile from './Profile/OrderSummaryProfile';
 
 const App = () => {
   const userID = useSelector((state) => state.user.userid);
@@ -53,13 +54,14 @@ const App = () => {
               }
             />
             <Route
-              path="/profile"
+              path="/profile/summary"
               element={
                 <AdminRoute>
-                  <AdminProfile />
+                  <OrderSummaryProfile />
                 </AdminRoute>
               }
             />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/cart" element={<Cart/>} />        
           </Routes>
       </Router>
