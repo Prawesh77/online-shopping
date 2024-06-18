@@ -1,0 +1,9 @@
+.order_container{
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    background-color: rgba(69, 70, 70, 0.5);
+    backdrop-filter: blur(100px);
+    z-index: 100;
+}

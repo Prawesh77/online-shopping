@@ -132,7 +132,6 @@ app.post("/addtocart", async (req, res) => {
       userId: existingCart.userId,
       products: detailedProducts,
     };
-console.log(response)
     res.status(200).json(response);
   } catch (error) {
     console.error("Error adding to cart:", error);

@@ -28,7 +28,7 @@ const loginRoutes = require('./routes/loginRoute');
 const registerRoutes = require('./routes/registerRoute');
 // const protectedRoutes = require('./routes/protectedRoute');
 const cartRoutes = require('./routes/cartRoute');
-// const userRoutes = require('./routes/userRoute');
+const orderRoutes = require('./routes/orderRoute');
 
 
 // routes/api points haru define
@@ -37,7 +37,7 @@ app.use('/register', registerRoutes);
 app.use('/login', loginRoutes);
 // app.use('/protected', protectedRoutes);
 app.use('/cart', cartRoutes);
-// app.use('/users', userRoutes);
+app.use('/order', orderRoutes);
 
 
 

@@ -16,17 +16,20 @@ function ProductItem({ product }){
     return <div>Invalid product data</div>;
   }
 
-  const handleCartClick=async()=>{
-
-    //database maa add garya
-    const payload={userId: userid, productid:product._id}  
-    await dispatch(addToCartAsync(payload)); //addToCartAsync ley db maa add, loadToCartAsync ley db bata load
+  const handleCartClick=async(instock)=>{
+    if(instock>0){
+      const payload={userId: userid, productid:product._id}  
+      await dispatch(addToCartAsync(payload)); //addToCartAsync ley db maa add, loadToCartAsync ley db bata load
+    }else{
+      alert("Out of stock");
+    }
+    
   }
     return(
       <div className="maincomp" >
             
            {isLoggedIn && 
-           <i className="bx bx-cart-add cart" onClick={handleCartClick}></i>
+           <i className="bx bx-cart-add cart" onClick={()=>handleCartClick(product.instock)}></i>
             }
             <img
               src={`http://localhost:5000/public${product.imageurl}`}
@@ -46,9 +49,8 @@ function ProductItem({ product }){
                   {product.details.watt && ( // Concise conditional rendering
                     <li>{product.details.watt}</li>
                   )}
-                  {(product.instock>0) &&(
-                    <li>instock: {product.instock} left</li>
-                  )}
+                   {product.instock > 0 ? <li>instock: {product.instock} left</li> : <li>out of stock</li>}
+                  
                 </ul>
               </div>
               <div className="price">Rs {product.details.price}</div>

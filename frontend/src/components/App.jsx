@@ -4,6 +4,7 @@ import Home from './Home';
 import Signup from './Auth/Signup';
 import ProductList from './Products/ProductList';
 import Cart from './Cart/Cart';
+import AdminProfile from './Profile/AdminProfile';
 import "../css/App.css";
 import Addproductform from './Products/AddProductForm';
 import AdminRoute from './Protectedroutes/AdminRoute';
@@ -48,6 +49,14 @@ const App = () => {
               element={
                 <AdminRoute>
                   <Addproductform />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <AdminRoute>
+                  <AdminProfile />
                 </AdminRoute>
               }
             />

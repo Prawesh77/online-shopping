@@ -76,7 +76,7 @@
 .navbar .profilepic{
     height: 45px;
     width: 50px;
-    object-fit: cover;
+    object-fit: contain;
     cursor: pointer;
     border-radius: 50%;
     transition: transform 0.3s ease-in-out;

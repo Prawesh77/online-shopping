@@ -83,3 +83,16 @@
   .remove-button:hover {
     background-color: #c02020;
   }
+
+  .order-button{
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    background-color: #36e030;
+    color: #fff;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  .order-button:hover {
+    background-color: #20c020;
+  }

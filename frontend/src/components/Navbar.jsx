@@ -91,7 +91,7 @@ console.log(`http://localhost:5000/public${imageurl} `);
                       {showUserInfo && (
                         <div className={`user_info ${showUserInfo ? 'active' : ''}`} 
                         style={{ top: `${navbarHeight}px` }}>
-                          <p className="your_name">{userName ? userName : "no username"}</p>
+                          <Link to="/profile"><p className="your_name">{userName ? userName : "no username"}</p></Link>
                           <button onClick={handleLogout} className="logout_link">
                             Logout
                           </button>
