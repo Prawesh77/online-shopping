@@ -2,13 +2,15 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import orderAPI from './orderAPI'; // Path to your order API service
+import { updateStock } from '../productSlice/productSlice';
 
 // Async thunk to place an order
-export const placeOrderAsync = createAsyncThunk('order/placeOrder',async (orderData, { rejectWithValue }) => {
+export const placeOrderAsync = createAsyncThunk('order/placeOrder',async (orderData, { dispatch, rejectWithValue }) => {
     try {
         console.log("PlaceOrderAsync");
       const response = await orderAPI.placeOrder(orderData);
       console.log(response);
+      dispatch(updateStock({ productId: orderData.order.productId, quantity: orderData.order.quantity }));
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

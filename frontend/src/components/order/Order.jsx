@@ -15,7 +15,7 @@ const userID = useSelector((state) => state.user.userid);
         userid: userID ,
         order: {
             productId: productId ,
-            quantity: '',
+            quantity: 0,
             deliveryAddress: {
                 fullName: '',
                 address: '',
@@ -64,13 +64,23 @@ const userID = useSelector((state) => state.user.userid);
     // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Form Data Submitted:', orderFormData);
-        dispatch(placeOrderAsync(orderFormData));
+        const parsedQuantity = parseInt(orderFormData.order.quantity, 10);
+
+  const updatedOrderData = {
+    ...orderFormData,
+    order: {
+      ...orderFormData.order,
+      quantity: parsedQuantity,
+    },
+  };
+        console.log('Form Data Submitted:', updatedOrderData);
+        dispatch(placeOrderAsync(updatedOrderData));
         console.log("dispatched");
     };
 
     return (
-        <form onSubmit={handleSubmit} className='order_container'>
+      <div className="order_containerr">
+         <form onSubmit={handleSubmit} className='order_container'>
             <div>
                 <label>Quantity:</label>
                 <input type="number" name="order.quantity" value={orderFormData.order.quantity} onChange={handleChange} />
@@ -98,6 +108,8 @@ const userID = useSelector((state) => state.user.userid);
             <button type="submit">Submit Order</button>
             <p onClick={toggleOrder}>Close</p>
         </form>
+      </div>
+        
     );
 }
 Order.propTypes = {

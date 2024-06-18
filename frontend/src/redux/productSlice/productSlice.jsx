@@ -21,7 +21,17 @@ const productSlice = createSlice({
   reducers: {
     addProductLocal(state, action) { 
         state.products.push(action.payload); //new product to local state, refresh nagari change garauna
+        console.log(state.product);
       },
+      updateStock(state, action) {
+        console.log("Straight from update stock");
+        console.log(action.payload);
+        const { productId, quantity } = action.payload;
+        const product = state.products.find(p => p._id === productId); // Find the product by ID
+        if (product) {
+            product.instock -= quantity; // Reduce the stock
+        }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -48,7 +58,7 @@ const productSlice = createSlice({
       });
   },
 });
-export const { addProductLocal } = productSlice.actions;
+export const { addProductLocal, updateStock} = productSlice.actions;
 export default productSlice.reducer;
 
 //add it in fulfilled part of addProduct

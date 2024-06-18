@@ -13,7 +13,6 @@
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
   }
   
-  /* Header for the profile picture and username */
   .profile-header {
     display: flex;
     flex-direction: column;
@@ -50,7 +49,6 @@
     margin: 0;
   }
   
-  /* Container for orders and revenue sections */
   .orders-info, .revenue-info {
     display: flex;
     justify-content: space-between;
@@ -58,7 +56,6 @@
     margin-top: 20px;
   }
   
-  /* Common styling for summary boxes */
   .summary-box {
     flex: 1;
     padding: 20px;
@@ -124,7 +121,6 @@
     transform: scale(1.2);
   }
   
-  /* Responsive Design */
   @media (max-width: 600px) {
     .orders-info, .revenue-info {
       flex-direction: column;

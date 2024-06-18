@@ -7,6 +7,7 @@ import Filter from "./Filter";
 
 const ProductList = () => {
   const { products, status, error } = useSelector((state) => state.product);
+  console.log(products);
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isAdmin = useSelector((state) => state.user.isAdmin);
 
