@@ -12,20 +12,26 @@ function detailedCompare(obj1, obj2) {
     for (const key in obj1) {
         if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
             if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-                detailedCompare(obj1[key], obj2[key]);
+                if (!detailedCompare(obj1[key], obj2[key])) {
+                    return false;
+                }
             } else if (obj1[key] !== obj2[key]) {
                 console.log(`Mismatch at key: ${key}, obj1: ${obj1[key]}, obj2: ${obj2[key]}`);
+                return false;
             }
         } else {
             console.log(`Missing key in one object: ${key}`);
+            return false;
         }
     }
+    return true; // Return true if all keys and values match
 }
 app.post('/', async (req, res) => {
     const { userid, order } = req.body;
-    const { productId, quantity, deliveryAddress } = order;
+    const { productId, quantity, deliveryAddress, priceUser } = order;
     deliveryAddress.contactNo = parseInt(deliveryAddress.contactNo);
-    const status = "pending";
+    let status = priceUser ? 'pending' : 'accepted';
+    console.log(req.body);
 
     const userIdObj = new mongoose.Types.ObjectId(userid);
     const productIdObj = new mongoose.Types.ObjectId(productId);
@@ -61,14 +67,19 @@ app.post('/', async (req, res) => {
             const existingProductOrder = order.order.find(
                 item => item.productId.toString() === productIdObj.toString() && item.status === 'pending'
             );
-
+            console.log(existingProductOrder);
             if (existingProductOrder) {
                 // Check if delivery addresses match before updating quantity
-                const existingDeliveryAddress = existingProductOrder.deliveryAddress.toObject ? existingProductOrder.deliveryAddress.toObject() : existingProductOrder.deliveryAddress;
+                const existingDeliveryAddress = existingProductOrder.deliveryAddress.toObject();
                 detailedCompare(existingDeliveryAddress, deliveryAddress);
-                if (existingDeliveryAddress===deliveryAddress) {
+                // console.log(typeof(existingDeliveryAddress), typeof(deliveryAddress) );
+                // console.log(existingDeliveryAddress);
+                // console.log(deliveryAddress);
+                // console.log(JSON.stringify(existingDeliveryAddress)=== JSON.stringify(deliveryAddress));
+                // console.log(existingProductOrder.priceUser.toString()=== priceUser);
+                if (JSON.stringify(existingDeliveryAddress)=== JSON.stringify(deliveryAddress) && existingProductOrder.priceUser.toString()=== priceUser ) {
                     // Update the existing order quantity if addresses match and product is in stock
-                    if (product.instock >= existingProductOrder.quantity + quantity) {
+                    if (product.instock >= existingProductOrder.quantity) {
                         existingProductOrder.quantity += quantity;
                     } else {
                         return res.status(400).json({ message: 'Not enough stock available' });
@@ -80,6 +91,7 @@ app.post('/', async (req, res) => {
                         productName: product.details.name,
                         imageurl: product.imageurl,
                         quantity,
+                        priceUser: priceUser ? parseFloat(priceUser) : null,
                         deliveryAddress,
                         status,
                     });
@@ -91,6 +103,7 @@ app.post('/', async (req, res) => {
                     productName: product.details.name,
                     imageurl: product.imageurl,
                     quantity,
+                    priceUser: priceUser ? parseFloat(priceUser) : null,
                     deliveryAddress,
                     status,
                 });
@@ -106,6 +119,7 @@ app.post('/', async (req, res) => {
                     productName: product.details.name,
                     imageurl: product.imageurl,
                     quantity,
+                    priceUser: priceUser ? parseFloat(priceUser) : null,
                     deliveryAddress,
                     status,
                 });
@@ -119,6 +133,7 @@ app.post('/', async (req, res) => {
                             productName: product.details.name,
                             imageurl: product.imageurl,
                             quantity,
+                            priceUser: priceUser ? parseFloat(priceUser) : null,
                             deliveryAddress,
                             status,
                         },
@@ -145,56 +160,170 @@ app.post('/', async (req, res) => {
     }
 });
 
+
+
+
+
+
+
+
+
 // GET all order details endpoint
+// app.get('/all-order-details', async (req, res) => {
+//     try {
+//         // Fetch all orders and populate necessary fields
+//         const orders = await Order.find()
+//             .populate('userid', 'userName')
+//             .populate('order.productId', 'details.name details.price details.brand');
+
+//         if (!orders || orders.length === 0) {
+//             return res.status(404).json({ message: 'No orders found' });
+//         }
+
+//         // Prepare the response data
+//         const response = await Promise.all(
+//             orders.map(async (order) => {
+//                 // Extract user details
+//                 const user = order.userid;
+
+//                 // Prepare the products list
+//                 const products = order.order.map((item) => {
+//                     const product = item.productId;
+//                     // Determine dispatched and completed status
+//                     const dispatched = ['dispatched', 'delivered', 'completed'].includes(item.status);
+//                     const completed = item.status === 'completed';
+
+//                     return {
+//                         name: product.details.name,
+//                         brand: product.details.brand,
+//                         dispatched,
+//                         completed,
+//                         price: item.priceUser || product.details.price,
+//                         quantity: item.quantity,
+//                         orderid: item._id
+//                     };
+//                 });
+
+//                 console.log(order._id,
+//                     user.userName,
+//                     products)
+//                 return {
+//                     userOrderid: order._id,
+//                     username: user.userName,
+//                     products,
+//                 };
+//             })
+//         );
+
+//         return res.status(200).json(response);
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ message: 'Internal server error' });
+//     }
+// });
+
+// gives all order based on status 
 app.get('/all-order-details', async (req, res) => {
     try {
-        // Fetch all orders and populate necessary fields
-        const orders = await Order.find()
-            .populate('userid', 'userName')
-            .populate('order.productId', 'details.name details.price');
-
-        if (!orders || orders.length === 0) {
-            return res.status(404).json({ message: 'No orders found' });
+        // Extract the status from the query parameters
+        const { status } = req.query;
+        let query = {};
+        console.log(status);
+        // Adjust the query based on the status parameter
+        switch (status) {
+            case 'pending':
+                query = { 'order.status': 'pending' };
+                break;
+            case 'accepted':
+                query = { 'order.status': { $ne: 'pending' } };
+                break;
+            case 'completed':
+                query = { 'order.status': 'completed' };
+                break;
+            default:
+                break;
         }
 
-        // Prepare the response data
-        const response = await Promise.all(
-            orders.map(async (order) => {
+        // Fetch orders based on the query
+        const orders = await Order.find()
+            .populate('userid', 'userName')
+            .populate('order.productId', 'details.name details.price details.brand');
+
+            if (!orders || orders.length === 0) {
+                return res.status(404).json({ message: 'No orders found' });
+            }
+    
+            // Prepare the response data
+            const response = orders.map((order) => {
                 // Extract user details
                 const user = order.userid;
-
-                // Prepare the products list
-                const products = order.order.map((item) => {
-                    const product = item.productId;
-                    // Determine dispatched and completed status
-                    const dispatched = ['dispatched', 'delivered', 'completed'].includes(item.status);
-                    const completed = item.status === 'completed';
-
-                    return {
-                        name: product.details.name,
-                        dispatched,
-                        completed,
-                        price: item.priceUser || product.details.price,
-                        quantity: item.quantity,
-                        orderid: item._id
-                    };
-                });
-
-                // Return the formatted response for each user
+    
+                // Prepare the products list based on the status
+                const products = order.order
+                    .filter((item) => {
+                        if (status === 'pending' && item.status === 'pending' && item.priceUser !== null && item.priceUser !== '') {
+                            return true; // Include if status is pending and priceUser is present
+                        } else if (status === 'pending') {
+                            return false; // Exclude if status is pending and no priceUser
+                        } else if (status === 'accepted') {
+                            return item.status !== 'pending';
+                        } else if (status === 'completed') {
+                            return item.status === 'completed';
+                        } else {
+                            return true; // Return all if no specific status is specified
+                        }
+                    })
+                    .map((item) => {
+                        const product = item.productId;
+    
+                        if (status === 'pending' && item.status === 'pending' && item.priceUser !== null && item.priceUser !== '') {
+                            // Return specific fields for pending orders with priceUser
+                            return {
+                                productName: product.details.name,
+                                brand: product.details.brand,
+                                quantity: item.quantity,
+                                yourPrice: item.priceAdmin?item.priceAdmin:'', // Assuming priceAdmin is what you meant by price in your schema
+                                buyersPrice: item.priceUser,
+                                orderid: item._id
+                            };
+                        } else {
+                            // Return fields for accepted or completed orders
+                            const dispatched = ['dispatched', 'delivered', 'completed'].includes(item.status);
+                            const completed = item.status === 'completed';
+    
+                            return {
+                                productName: product.details.name,
+                                brand: product.details.brand,
+                                quantity: item.quantity,
+                                dispatched,
+                                completed,
+                                price: item.priceUser || product.details.price,
+                                orderid: item._id
+                            };
+                        }
+                    });
+    
                 return {
                     userOrderid: order._id,
                     username: user.userName,
                     products,
                 };
-            })
-        );
+            }).filter(order => order.products.length > 0); // Remove orders with no products after filtering
+    
+            return res.status(200).json(response);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    });
 
-        return res.status(200).json(response);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-});
+
+
+
+
+
+
+
 
 
 
@@ -249,6 +378,8 @@ app.post('/get-order', async (req, res) => {
 
 
 
+
+// status update if admin clicks on dispatched, completed,cancelled, //add garna baki accepted wala
 app.put('/update-status', async (req, res) => {
     try {
       // Destructure request body

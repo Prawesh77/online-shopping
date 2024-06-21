@@ -14,6 +14,7 @@ import { fetchProducts } from "../redux/productSlice/productSlice";
 import { loadCartAsync } from "../redux/CartSlice/cartSlice";
 import OrderSummaryProfile from './Profile/OrderSummaryProfile';
 import OrderStatus from './Profile/OrderStatus';
+import Bargain from './Profile/Bargain';
 
 const App = () => {
   const userID = useSelector((state) => state.user.userid);
@@ -64,7 +65,8 @@ const App = () => {
             />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/orders" element={<OrderStatus />} />
-            <Route path="/cart" element={<Cart/>} />        
+            <Route path="/cart" element={<Cart/>} />
+            <Route path="/profile/bargain" element={<Bargain/>} />        
           </Routes>
       </Router>
     </>

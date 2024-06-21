@@ -273,7 +273,9 @@ const Profile = () => {
   const [editableProducts, setEditableProducts] = useState({});
 
   useEffect(() => {
-    dispatch(getAllOrderAsync());
+    if(isAdmin){
+      dispatch(getAllOrderAsync('accepted'));
+    }
   }, [dispatch]);
 
   useEffect(() => {
@@ -385,6 +387,19 @@ const Profile = () => {
     <div>
       {isAdmin ? (
         <div className="admin-profile">
+          <div className="notification_bell">
+              <Link to="/profile/bargain" >
+                  <i className='bx bxs-bell'></i>
+              </Link> 
+              <p className="noti_num">1</p>   
+              {/* {
+                cartnum===0? 
+                <p className="cart_num_none"></p> :
+                <p className="cart_num">{cartnum}</p>
+              }  */}
+
+          </div>
+          
           <div className="profile-header">
             <div className="profile-picture-container">
               <img src={adminData.profilePictureUrl} alt="Profile" className="profile-picture" />
@@ -420,6 +435,7 @@ const Profile = () => {
               <thead>
                 <tr>
                   <th>Username</th>
+                  <th>Brand</th>
                   <th>Product</th>
                   <th>Price</th>
                   <th>Quantity</th>
@@ -429,6 +445,7 @@ const Profile = () => {
                 </tr>
               </thead>
               <tbody>
+                {console.log(orders)}
                 {orders && Array.isArray(orders) && orders.map((order, orderIndex) => (
                   order.products.map((product, productIndex) => (
                     <tr key={product.orderid}>
@@ -437,6 +454,7 @@ const Profile = () => {
                           {order.username}
                         </td>
                       )}
+                      <td>{product.brand}</td>
                       <td>{product.name}</td>
                       <td>Rs{product.price}</td>
                       <td>{product.quantity}</td>

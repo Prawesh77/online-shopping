@@ -2,10 +2,10 @@
 
 import axios from 'axios';
 
-const PLACE_ORDER_URL = 'http://localhost:5000/order'; // Adjust to your backend URL
-const GET_ORDER_BY_ID_URL ='http://localhost:5000/order/get-order'
-const GET_ALL_ORDER_URL= 'http://localhost:5000/order/all-order-details'
-const SET_ORDER_STATUS_URL= 'http://localhost:5000/order/update-status'
+const PLACE_ORDER_URL = 'http://localhost:5000/order'; // to place order
+const GET_ORDER_BY_ID_URL ='http://localhost:5000/order/get-order' //get orders of specific user
+const GET_ALL_ORDER_URL= 'http://localhost:5000/order/all-order-details' //to get all order based on status for admin
+const SET_ORDER_STATUS_URL= 'http://localhost:5000/order/update-status' // for admin to set status of order
 
 const placeOrder = async (orderData) => {
     console.log(orderData);
@@ -17,9 +17,9 @@ const placeOrder = async (orderData) => {
     const response = await axios.post(GET_ORDER_BY_ID_URL, userid);
     return response;
   }
-  const getAllOrder = async () => {
+  const getAllOrder = async (query) => {
     console.log("Im in getAllOrder");
-    const response = await axios.get(GET_ALL_ORDER_URL);
+    const response = await axios.get(`${GET_ALL_ORDER_URL}${query}`);
     return response;
   }
   const setOrderStatus = async (toSet) => {

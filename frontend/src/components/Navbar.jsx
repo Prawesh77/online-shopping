@@ -100,14 +100,14 @@ const Navbar = () => {
 
                             
               <div className="for_cart">
-              <Link to="/cart" >
-                <i className='bx bx-cart-add nav_cart'></i>
-              </Link>    
-              {
-                cartnum===0? 
-                <p className="cart_num_none"></p> :
-                <p className="cart_num">{cartnum}</p>
-              } 
+                  <Link to="/cart" >
+                    <i className='bx bx-cart-add nav_cart'></i>
+                  </Link>    
+                  {
+                    cartnum===0? 
+                    <p className="cart_num_none"></p> :
+                    <p className="cart_num">{cartnum}</p>
+                  } 
               </div>
               <button onClick={toggleDarkMode}>
               {isDarkMode ? 'Light Mode' : 'Dark Mode'}

@@ -28,10 +28,12 @@ export const getOrderStatusByIdAsync = createAsyncThunk('order/get-order', async
   }
 })
 
-export const getAllOrderAsync = createAsyncThunk('order/all-order-details', async()=>{
+export const getAllOrderAsync = createAsyncThunk('order/all-order-details', async(status = null)=>{
   try{
     console.log("Im in getAllOrderAsync");
-    const response= await orderAPI.getAllOrder();
+    const query = status ? `?status=${status}` : '';
+    console.log(query);
+    const response= await orderAPI.getAllOrder(query);
     return (response.data);
   }catch(err){
     return(err);

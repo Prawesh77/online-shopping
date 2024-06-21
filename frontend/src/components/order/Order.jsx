@@ -22,7 +22,8 @@ const userID = useSelector((state) => state.user.userid);
                 contactNo: '',
                 city: '',
                 state: ''
-            }
+            },
+            priceUser: 0
         }
     });
 
@@ -83,7 +84,7 @@ const userID = useSelector((state) => state.user.userid);
          <form onSubmit={handleSubmit} className='order_container'>
             <div>
                 <label>Quantity:</label>
-                <input type="number" name="order.quantity" value={orderFormData.order.quantity} onChange={handleChange} />
+                <input type="number" name="order.quantity"  placeholder="How many?" onChange={handleChange} required/>
             </div>
             <div>
                 <label>Full Name:</label>
@@ -104,6 +105,10 @@ const userID = useSelector((state) => state.user.userid);
             <div>
                 <label>State:</label>
                 <input type="text" name="order.state" value={orderFormData.order.deliveryAddress.state} onChange={handleChange} />
+            </div>
+            <div>
+                <label>Have your say on price:</label>
+                <input type="number" name="order.priceUser" value={orderFormData.order.deliveryAddress.priceUser} onChange={handleChange} />
             </div>
             <button type="submit">Submit Order</button>
             <p onClick={toggleOrder}>Close</p>
