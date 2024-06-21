@@ -455,7 +455,7 @@ const Profile = () => {
                         </td>
                       )}
                       <td>{product.brand}</td>
-                      <td>{product.name}</td>
+                      <td>{product.productName}</td>
                       <td>Rs{product.price}</td>
                       <td>{product.quantity}</td>
                       <td>

@@ -4,8 +4,8 @@ import axios from 'axios';
 
 const PLACE_ORDER_URL = 'http://localhost:5000/order'; // to place order
 const GET_ORDER_BY_ID_URL ='http://localhost:5000/order/get-order' //get orders of specific user
-const GET_ALL_ORDER_URL= 'http://localhost:5000/order/all-order-details' //to get all order based on status for admin
-const SET_ORDER_STATUS_URL= 'http://localhost:5000/order/update-status' // for admin to set status of order
+const GET_ALL_ORDER_URL= 'http://localhost:5000/order/all-order-details' //gives all order based on status(accepted for admin profile and pending for bargaining)
+const SET_ORDER_STATUS_URL= 'http://localhost:5000/order/update-status' //to set status of order
 
 const placeOrder = async (orderData) => {
     console.log(orderData);

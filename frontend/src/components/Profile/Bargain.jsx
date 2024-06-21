@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import '../../css/Bargain.css'; // Importing CSS for styling
-import { getAllOrderAsync, getOrderStatusByIdAsync} from '../../redux/OrderSlice/orderSlice';
+import { getAllOrderAsync, getOrderStatusByIdAsync, setOrderStatusAsync} from '../../redux/OrderSlice/orderSlice';
 
 const Bargain = () => {
     const dispatch = useDispatch();
     const isAdmin = useSelector((state) => state.user.isAdmin);
     const userID = useSelector((state) => state.user.userid);
     const allorder = useSelector((state) => state.order.allorder);
-    
+    console.log("Decoded", userID);
     useEffect(() => {
         if(isAdmin){
           dispatch(getAllOrderAsync('pending'));
@@ -58,6 +58,7 @@ const Bargain = () => {
     const handlePriceSave = (username, index) => {
         const updatedData = data.map(user => {
             if (user.username === username) {
+
                 const newProducts = [...user.products];
                 newProducts[index].yourPrice = editedPrice;
                 return { ...user, products: newProducts };
@@ -68,9 +69,28 @@ const Bargain = () => {
         setEditing(null);
     };
 
-    const handleStatusChange = (username, index) => {
+    const handleAcceptStatusChange = (username, index, userorderid, productid) => {
         const updatedData = data.map(user => {
             if (user.username === username) {
+                const newStatus = {
+                    accepted: true 
+                };
+                dispatch(setOrderStatusAsync({ userorderid, productid, newStatus }));
+                const newProducts = user.products.filter((_, i) => i !== index);
+                return { ...user, products: newProducts };
+            }
+            return user;
+        }).filter(user => user.products.length > 0); // Remove users with no products left
+        setData(updatedData);
+
+    };
+    const handleCancelStatusChange = (username, index, userorderid, productid) => {
+        const updatedData = data.map(user => {
+            if (user.username === username) {
+                const newStatus = {
+                    cancelled: true 
+                };
+                dispatch(setOrderStatusAsync({ userorderid, productid, newStatus }));
                 const newProducts = user.products.filter((_, i) => i !== index);
                 return { ...user, products: newProducts };
             }
@@ -126,14 +146,14 @@ const Bargain = () => {
                                 </td>
                                 <td>
                                     <button
-                                        onClick={() => handleStatusChange(user.username, productIndex)}
+                                        onClick={() => handleAcceptStatusChange(user.username, productIndex, user.userOrderid, product.orderid)}
                                     >
                                         Accept
                                     </button>
                                 </td>
                                 <td>
                                     <button
-                                        onClick={() => handleStatusChange(user.username, productIndex)}
+                                        onClick={() => handleCancelStatusChange(user.username, productIndex, user.userOrderid, product.orderid)}
                                     >
                                         Cancel
                                     </button>

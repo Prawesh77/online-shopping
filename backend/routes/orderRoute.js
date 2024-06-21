@@ -30,7 +30,7 @@ app.post('/', async (req, res) => {
     const { userid, order } = req.body;
     const { productId, quantity, deliveryAddress, priceUser } = order;
     deliveryAddress.contactNo = parseInt(deliveryAddress.contactNo);
-    let status = priceUser ? 'pending' : 'accepted';
+    // let status = priceUser ? 'pending' : 'accepted';
     console.log(req.body);
 
     const userIdObj = new mongoose.Types.ObjectId(userid);
@@ -58,7 +58,13 @@ app.post('/', async (req, res) => {
         if (product.instock < quantity) {
             return res.status(400).json({ message: 'Not enough stock available' });
         }
-
+        // console.log('.............................')
+        // console.log(typeof(priceUser),typeof(product.details.price.toString()))
+        // console.log(priceUser && (priceUser === product.details.price.toString()))
+        // console.log('.............................')
+        let statusCheck = priceUser && (priceUser === product.details.price.toString());
+        console.log(statusCheck);
+        let status = statusCheck ? 'accepted' : 'pending';
         // Find an existing pending order for this user
         let order = await Order.findOne({ userid: userIdObj, 'order.status': 'pending' });
 
@@ -67,16 +73,11 @@ app.post('/', async (req, res) => {
             const existingProductOrder = order.order.find(
                 item => item.productId.toString() === productIdObj.toString() && item.status === 'pending'
             );
-            console.log(existingProductOrder);
+            // console.log(existingProductOrder);
             if (existingProductOrder) {
                 // Check if delivery addresses match before updating quantity
                 const existingDeliveryAddress = existingProductOrder.deliveryAddress.toObject();
                 detailedCompare(existingDeliveryAddress, deliveryAddress);
-                // console.log(typeof(existingDeliveryAddress), typeof(deliveryAddress) );
-                // console.log(existingDeliveryAddress);
-                // console.log(deliveryAddress);
-                // console.log(JSON.stringify(existingDeliveryAddress)=== JSON.stringify(deliveryAddress));
-                // console.log(existingProductOrder.priceUser.toString()=== priceUser);
                 if (JSON.stringify(existingDeliveryAddress)=== JSON.stringify(deliveryAddress) && existingProductOrder.priceUser.toString()=== priceUser ) {
                     // Update the existing order quantity if addresses match and product is in stock
                     if (product.instock >= existingProductOrder.quantity) {
@@ -92,6 +93,7 @@ app.post('/', async (req, res) => {
                         imageurl: product.imageurl,
                         quantity,
                         priceUser: priceUser ? parseFloat(priceUser) : null,
+                        priceAccepted: status==='accepted'?product.details.price:null,
                         deliveryAddress,
                         status,
                     });
@@ -103,7 +105,8 @@ app.post('/', async (req, res) => {
                     productName: product.details.name,
                     imageurl: product.imageurl,
                     quantity,
-                    priceUser: priceUser ? parseFloat(priceUser) : null,
+                    priceUser: statusCheck ? null : parseFloat(priceUser),
+                    priceAccepted: statusCheck?product.details.price:null,
                     deliveryAddress,
                     status,
                 });
@@ -120,6 +123,7 @@ app.post('/', async (req, res) => {
                     imageurl: product.imageurl,
                     quantity,
                     priceUser: priceUser ? parseFloat(priceUser) : null,
+                    priceAccepted: status==='accepted'?product.details.price:null,
                     deliveryAddress,
                     status,
                 });
@@ -134,6 +138,7 @@ app.post('/', async (req, res) => {
                             imageurl: product.imageurl,
                             quantity,
                             priceUser: priceUser ? parseFloat(priceUser) : null,
+                            priceAccepted: status==='accepted'?product.details.price:null,
                             deliveryAddress,
                             status,
                         },
@@ -161,68 +166,7 @@ app.post('/', async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-// GET all order details endpoint
-// app.get('/all-order-details', async (req, res) => {
-//     try {
-//         // Fetch all orders and populate necessary fields
-//         const orders = await Order.find()
-//             .populate('userid', 'userName')
-//             .populate('order.productId', 'details.name details.price details.brand');
-
-//         if (!orders || orders.length === 0) {
-//             return res.status(404).json({ message: 'No orders found' });
-//         }
-
-//         // Prepare the response data
-//         const response = await Promise.all(
-//             orders.map(async (order) => {
-//                 // Extract user details
-//                 const user = order.userid;
-
-//                 // Prepare the products list
-//                 const products = order.order.map((item) => {
-//                     const product = item.productId;
-//                     // Determine dispatched and completed status
-//                     const dispatched = ['dispatched', 'delivered', 'completed'].includes(item.status);
-//                     const completed = item.status === 'completed';
-
-//                     return {
-//                         name: product.details.name,
-//                         brand: product.details.brand,
-//                         dispatched,
-//                         completed,
-//                         price: item.priceUser || product.details.price,
-//                         quantity: item.quantity,
-//                         orderid: item._id
-//                     };
-//                 });
-
-//                 console.log(order._id,
-//                     user.userName,
-//                     products)
-//                 return {
-//                     userOrderid: order._id,
-//                     username: user.userName,
-//                     products,
-//                 };
-//             })
-//         );
-
-//         return res.status(200).json(response);
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({ message: 'Internal server error' });
-//     }
-// });
-
-// gives all order based on status 
+// gives all order based on status(accepted for admin profile and pending for bargaining)
 app.get('/all-order-details', async (req, res) => {
     try {
         // Extract the status from the query parameters
@@ -297,7 +241,7 @@ app.get('/all-order-details', async (req, res) => {
                                 quantity: item.quantity,
                                 dispatched,
                                 completed,
-                                price: item.priceUser || product.details.price,
+                                price: item.priceAccepted,
                                 orderid: item._id
                             };
                         }
@@ -318,15 +262,7 @@ app.get('/all-order-details', async (req, res) => {
     });
 
 
-
-
-
-
-
-
-
-
-
+//to get order of user using their userid
 app.post('/get-order', async (req, res) => {
     try {
         console.log("From get-order");
@@ -379,21 +315,21 @@ app.post('/get-order', async (req, res) => {
 
 
 
-// status update if admin clicks on dispatched, completed,cancelled, //add garna baki accepted wala
+// status update if admin clicks on dispatched, completed,cancelled, accepted //add garna baki accepted wala
 app.put('/update-status', async (req, res) => {
     try {
       // Destructure request body
-      const { userorderid, productid, newStatus } = req.body;
+      const { userorderid, productid, newStatus} = req.body;
       console.log("1",newStatus.dispatched === false);
       console.log("2",newStatus.dispatched === true);
       console.log("3",newStatus.completed === true);
       console.log("4",newStatus.cancelled === true);
-      // Log the request body for debugging
+      console.log("5",newStatus.accepted === true)
+
       console.log('Request body:', req.body);
         
-      // Find the order by its ID
       const order = await Order.findById(userorderid);
-        console.log(order);
+        // console.log(order);
       // Check if the order is found
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
@@ -401,7 +337,7 @@ app.put('/update-status', async (req, res) => {
   
       // Find the specific product in the order array
       const productOrder = order.order.find(item => item._id.toString() === productid);
-      console.log(productOrder);
+    //   console.log(productOrder);
       // Check if the product in the order is found
       if (!productOrder) {
         return res.status(404).json({ message: 'Product in order not found' });
@@ -410,24 +346,35 @@ app.put('/update-status', async (req, res) => {
 
       // Update the status based on newStatus conditions
       if (newStatus.dispatched === false) {
+        console.log("newStatus.dispatched === false")
         productOrder.status = 'pending';
       } else if (newStatus.dispatched === true) {
+        console.log("newStatus.dispatched === true")
         productOrder.status = 'dispatched';
       }
   
       if (newStatus.completed === true) {
+        console.log("newStatus.completed === true")
         productOrder.status = 'completed';
       }
   
       if (newStatus.cancelled === true) {
+        console.log("newStatus.cancelled === true")
+        productOrder.status = 'cancelled';
         // Remove the product from the order array
-        order.order = order.order.filter(item => item.productId.toString() !== productid);
+        order.order = order.order.filter(item => item._id.toString() !== productid);
   
         // If no products are left in the order, remove the entire order document
         if (order.order.length === 0) {
           await Order.findByIdAndDelete(userorderid);
+          console.log("Order and all products cancelled and removed");
           return res.status(200).json({ message: 'Order and all products cancelled and removed' });
         }
+      }
+      if(newStatus.accepted === true){
+        console.log("newStatus.accepted === true");
+        productOrder.status = 'accepted';
+        productOrder.priceAccepted = productOrder.priceUser;
       }
   
       // Save the updated order document
