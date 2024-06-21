@@ -68,7 +68,7 @@ const cartSlice = createSlice({
         state.loading = false;
         state.status = 'succeeded';
         state.cart = action.payload;
-        console.log(state.cart);
+        // console.log(state.cart);
 
       })
       .addCase(loadCartAsync.rejected, (state, action) => {

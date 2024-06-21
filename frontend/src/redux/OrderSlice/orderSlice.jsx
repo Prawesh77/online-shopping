@@ -18,10 +18,41 @@ export const placeOrderAsync = createAsyncThunk('order/placeOrder',async (orderD
   }
 );
 
+export const getOrderStatusByIdAsync = createAsyncThunk('order/get-order', async(userid,{ rejectWithValue })=>{
+  try{
+    const response = await orderAPI.getOrderById(userid);
+    console.log(response.data);
+    return response.data;
+  }catch(err){
+    return rejectWithValue(err.response.data);
+  }
+})
+
+export const getAllOrderAsync = createAsyncThunk('order/all-order-details', async()=>{
+  try{
+    console.log("Im in getAllOrderAsync");
+    const response= await orderAPI.getAllOrder();
+    return (response.data);
+  }catch(err){
+    return(err);
+  }
+})
+export const setOrderStatusAsync = createAsyncThunk('order/update-status', async(toSet)=>{
+  try{
+    console.log("Im in setStatusAsync");
+    await orderAPI.setOrderStatus(toSet);
+  }catch(err){
+    return(err);
+  }
+})
+
 const orderSlice = createSlice({
   name: 'order',
   initialState: {
     order: null,
+    orderbyid:null,
+    allorder:null,
+    orderStatus: null,
     status: 'idle',
     error: null,
   },
@@ -41,6 +72,21 @@ const orderSlice = createSlice({
       .addCase(placeOrderAsync.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
+      })
+      .addCase(getOrderStatusByIdAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      .addCase(getOrderStatusByIdAsync.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.orderbyid = action.payload;
+      })
+      .addCase(getAllOrderAsync.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.allorder = action.payload;
+      })
+      .addCase(setOrderStatusAsync.fulfilled, (state) => {
+        state.status = 'succeeded';
       });
   },
 });

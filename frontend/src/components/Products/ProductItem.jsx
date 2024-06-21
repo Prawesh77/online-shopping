@@ -7,7 +7,7 @@ import { addToCartAsync } from '../../redux/CartSlice/cartSlice';
 
 function ProductItem({ product }){
   // console.log(product.imageurl);
-  const userid= useSelector((state)=>state.user.userid)
+  const userid= useSelector((state)=>state.user.userid);
   const isLoggedIn = useSelector((state)=> state.user.isLoggedIn);
   const dispatch = useDispatch();
 

@@ -12,28 +12,10 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   isAdmin: { type: Boolean, default: false },
   imageurl: { type: String },
-  order: [{
-    productId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
-    },
-    quantity: {
-      type: Number,
-      default: 1,
-    },
-    deliveryAddress: {
-      fullName: { type: String },
-      address: { type: String },
-      contactNo: { type: Number },
-      city: { type: String },
-      state: { type: String },
-    },
-    status: {
-      type: String,
-      enum: ['pending', 'processing', 'dispatched', 'delivered', 'cancelled'],
-      default: 'pending'
-    }
-  }]
+  orderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order',
+},
 },
   {
     timestamps: true,

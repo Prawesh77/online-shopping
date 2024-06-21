@@ -17,7 +17,7 @@ const getInitialState = () => {
     if (token) {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken);
+            // console.log(decodedToken);
             return {
                 token: token,
                 userid: decodedToken.userid,

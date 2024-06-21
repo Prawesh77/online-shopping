@@ -1,55 +1,146 @@
-// import { useState } from 'react';
-// import {useSelector} from 'react-redux';
+
+
+// import { useState, useEffect } from 'react';
+// import { useSelector, useDispatch } from 'react-redux';
 // import '../../css/Profile.css';
 // import { Link } from 'react-router-dom';
+// import { getAllOrderAsync, setOrderStatusAsync } from '../../redux/OrderSlice/orderSlice';
 
 // const Profile = () => {
-//   const userName = useSelector((state)=> state.user.userName);
-//   const imageurl= useSelector((state)=> state.user.imageurl);
+//   const dispatch = useDispatch();
+//   const userName = useSelector((state) => state.user.userName);
+//   const imageurl = useSelector((state) => state.user.imageurl);
 //   const isAdmin = useSelector((state) => state.user.isAdmin);
+//   const allorder = useSelector((state) => state.order.allorder);
+
 //   const [adminData, setAdminData] = useState({
 //     username: userName,
 //     profilePictureUrl: `http://localhost:5000/public${imageurl}`,
 //     ordersCompleted: 0,
 //     ordersPending: 0,
-//     totalRevenue: 0.00,
+//     ordersDispatched: 0,
+//     totalRevenue: 0.0,
 //   });
-//   const [orders, setOrders] = useState([
-//     {
-//       username: userName,
-//       product: 'Laptop, Headphones',
-//       products:[{
-//         name: 'Laptop',
-//         dispatched: true,
-//         completed: false
-//       },
-//       {
-//         name: 'Headphones',
-//         dispatched: false,
-//         completed: false
-//       },
-//     ]
-//     },
-//   ]);
 
-//   const handleDispatchedChange = (index) => {
-//     const updatedOrders = [...orders];
-//     updatedOrders[index].dispatched = !updatedOrders[index].dispatched;
-//     setOrders(updatedOrders);
+//   // Initialize orders with an empty array
+//   const [orders, setOrders] = useState([]);
+
+//   useEffect(() => {
+//     dispatch(getAllOrderAsync());
+//   }, [dispatch]);
+
+//   useEffect(() => {
+//     // Set orders only if allorder is not null or undefined
+//     if (allorder) {
+//       setOrders(allorder);
+//     }
+//   }, [allorder]);
+//   console.log(orders);
+
+//   useEffect(() => {
+//     const calculateOrderCounts = () => {
+//       let pendingCount = 0;
+//       let completedCount = 0;
+//       let dispatchedCount = 0;
+//       let totalRevenue = 0;
+
+//       orders.forEach(order => {
+//         order.products.forEach(product => {
+//           if (product.completed) {
+//             completedCount += 1;
+//             totalRevenue += product.price * product.quantity;
+//           } else if (product.dispatched) {
+//             dispatchedCount += 1;
+//           } else {
+//             pendingCount += 1;
+//           }
+//         });
+//       });
+
+//       setAdminData(prevData => ({
+//         ...prevData,
+//         ordersCompleted: completedCount,
+//         ordersPending: pendingCount,
+//         ordersDispatched: dispatchedCount,
+//         totalRevenue,
+//       }));
+//     };
+
+//     // Only calculate counts if orders is an array
+//     if (Array.isArray(orders)) {
+//       calculateOrderCounts();
+//     }
+//   }, [orders]);
+
+//   const handleDispatchedChange = (orderIndex, productIndex, userorderid, productid) => {
+//     //dispatch
+//     // dispatch(setOrderStatusAsync('dispatched',userorderid, productid));
+//     //local rendering ko lagi
+//     setOrders(prevOrders => {
+//       const newOrders = prevOrders.map((order, idx) => {
+//         if (idx === orderIndex) {
+//           const newProducts = order.products.map((product, pIdx) => {
+//             if (pIdx === productIndex) {
+//               const newStatus = {
+//                 dispatched: !product.dispatched,
+//             };
+//             console.log({userorderid, productid, newStatus});
+//             dispatch(setOrderStatusAsync({ userorderid, productid, newStatus }));
+//              console.log("dispatched");
+//             return {
+//                 ...product,
+//                 dispatched: !product.dispatched,
+//                 completed: product.dispatched ? false : product.completed,
+//               };
+//             }
+//             return product;
+//           });
+//           return {
+//             ...order,
+//             products: newProducts,
+//           };
+//         }
+//         return order;
+//       });
+//       return newOrders;
+//     });
 //   };
 
-//   // Handle completed checkbox change
-//   const handleCompletedChange = (index) => {
-//     const updatedOrders = [...orders];
-//     updatedOrders[index].completed = !updatedOrders[index].completed;
-//     setOrders(updatedOrders);
+//   const handleCompletedChange = (orderIndex, productIndex, userorderid, productid) => {
+//     //dispatch 
+
+//     //local rendering lai
+//     setOrders(prevOrders => {
+//       const newOrders = prevOrders.map((order, idx) => {
+//         if (idx === orderIndex) {
+//           const newProducts = order.products.map((product, pIdx) => {
+//             if (pIdx === productIndex) {
+//               const newStatus = {
+//                 completed: !product.completed
+//             };
+//             dispatch(setOrderStatusAsync({userorderid, productid, newStatus}));
+//               return {
+//                 ...product,
+//                 completed: !product.completed,
+//                 dispatched: !product.completed ? true : product.dispatched,
+//               };
+//             }
+//             return product;
+//           });
+//           return {
+//             ...order,
+//             products: newProducts,
+//           };
+//         }
+//         return order;
+//       });
+//       return newOrders;
+//     });
 //   };
 
 //   return (
 //     <div>
 //       {isAdmin ? (
-
-//         //if admin
 //         <div className="admin-profile">
 //           <div className="profile-header">
 //             <div className="profile-picture-container">
@@ -66,120 +157,132 @@
 //                 <h3>Orders Summary</h3>
 //                 <p>Completed: <span>{adminData.ordersCompleted}</span></p>
 //                 <p>Pending: <span>{adminData.ordersPending}</span></p>
+//                 <p>Dispatched: <span>{adminData.ordersDispatched}</span></p>
 //               </div>
-//             </Link>            
+//             </Link>
 //             <div className="summary-box">
 //               <h3>Total Revenue</h3>
-//               <p>$<span>{adminData.totalRevenue.toFixed(2)}</span></p>
+//               <p>Rs<span>{adminData.totalRevenue.toFixed(2)}</span></p>
 //             </div>
 //           </div>
+
+//           <div className="order-status-card">
+//             <Link to="/profile/orders">
+//               <button className="order-status-button">Check Your Order Status</button>
+//             </Link>
+//           </div>
+
 //           <div className="orders-table-container">
 //             <h3>Order Details</h3>
 //             <table className="orders-table">
 //               <thead>
 //                 <tr>
 //                   <th>Username</th>
-//                   <th>Products</th>
+//                   <th>Product</th>
+//                   <th>Price</th>
+//                   <th>Quantity</th>
 //                   <th>Dispatched</th>
 //                   <th>Completed</th>
 //                 </tr>
 //               </thead>
 //               <tbody>
-//                 {orders.map((order, index) => {
-//                   const products = order.product.split(', '); // Split products into an array
-//                   return products.map((product, productIndex) => (
-//                     <tr key={`${index}-${productIndex}`}>
-//                       {/* Render the username only on the first row of each order */}
+//                 {/* Guard against null or undefined orders */}
+//                 {orders && Array.isArray(orders) && orders.map((order, orderIndex) => (
+//                   order.products.map((product, productIndex) => (
+//                     <tr key={product.orderid}>
+//                       {/* {console.log(product.orderid, order.userOrderid)} */}
 //                       {productIndex === 0 && (
-//                         <td rowSpan={products.length}>
+//                         <td rowSpan={order.products.length}>
 //                           {order.username}
 //                         </td>
 //                       )}
-//                       <td>{product}</td>
-//                       {/* Render dispatched and completed checkboxes for each product */}
+//                       <td>{product.name}</td>
+//                       <td>Rs{product.price}</td>
+//                       <td>{product.quantity}</td>
 //                       <td>
 //                         <input
 //                           type="checkbox"
-//                           checked={order.productsDispatched && order.productsDispatched[productIndex]}
-//                           onChange={() => handleDispatchedChange(index, productIndex)}
+//                           checked={product.dispatched}
+//                           disabled={product.completed}
+//                           onChange={() => handleDispatchedChange(orderIndex, productIndex, order.userOrderid, product.orderid)}
 //                         />
 //                       </td>
 //                       <td>
 //                         <input
 //                           type="checkbox"
-//                           checked={order.productsCompleted && order.productsCompleted[productIndex]}
-//                           onChange={() => handleCompletedChange(index, productIndex)}
+//                           checked={product.completed}
+//                           disabled={product.completed}
+//                           onChange={() => handleCompletedChange(orderIndex, productIndex, order.userOrderid, product.orderid)}
 //                         />
 //                       </td>
 //                     </tr>
-//                   ));
-//                 })}
+//                   ))
+//                 ))}
 //               </tbody>
 //             </table>
 //           </div>
-
 //         </div>
-//       ):(
-//         //if not admin
-//           <div className="admin-profile">
-//             <div className="admin-profile">
-//               <div className="profile-header">
-//                 <div className="profile-picture-container">
-//                   <img src={adminData.profilePictureUrl} alt="Profile" className="profile-picture" />
-//                 </div>
-
-//                 <div className="profile-info">
-//                   <h2 className="username">{adminData.username}</h2>
-//                 </div>
-//               </div>
+//       ) : (
+//         <div className="admin-profile">
+//           <div className="profile-header">
+//             <div className="profile-picture-container">
+//               <img src={adminData.profilePictureUrl} alt="Profile" className="profile-picture" />
+//             </div>
+//             <div className="profile-info">
+//               <h2 className="username">{adminData.username}</h2>
 //             </div>
 //           </div>
 
+//           <div className="order-status-card">
+//             <Link to="/profile/orders">
+//               <button className="order-status-button">Check Your Order Status</button>
+//             </Link>
+//           </div>
+//         </div>
 //       )}
-//       </div>
-// )}
+//     </div>
+//   );
+// };
 
 // export default Profile;
 
+
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import '../../css/Profile.css';
 import { Link } from 'react-router-dom';
+import { getAllOrderAsync, setOrderStatusAsync } from '../../redux/OrderSlice/orderSlice';
 
 const Profile = () => {
+  const dispatch = useDispatch();
   const userName = useSelector((state) => state.user.userName);
   const imageurl = useSelector((state) => state.user.imageurl);
   const isAdmin = useSelector((state) => state.user.isAdmin);
+  const allorder = useSelector((state) => state.order.allorder);
 
   const [adminData, setAdminData] = useState({
     username: userName,
     profilePictureUrl: `http://localhost:5000/public${imageurl}`,
     ordersCompleted: 0,
     ordersPending: 0,
-    ordersDispatched: 0, // Added new variable for dispatched orders
-    totalRevenue: 0.0, // Added for total revenue
+    ordersDispatched: 0,
+    totalRevenue: 0.0,
   });
 
-  const [orders, setOrders] = useState([
-    {
-      id: 1,
-      username: 'Prawesh',
-      products: [
-        { name: 'Laptop', dispatched: true, completed: false, price: 1000, quantity: 1 },
-        { name: 'Headphones', dispatched: false, completed: false, price: 100, quantity: 2 },
-      ],
-    },
-    {
-      id: 2,
-      username: 'Rajesh Dai',
-      products: [
-        { name: 'Smartphone', dispatched: false, completed: false, price: 500, quantity: 1 },
-      ],
-    },
-  ]);
+  const [orders, setOrders] = useState([]);
+  const [editableProducts, setEditableProducts] = useState({});
 
   useEffect(() => {
-    // Calculate pending, completed, and dispatched orders
+    dispatch(getAllOrderAsync());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (allorder) {
+      setOrders(allorder);
+    }
+  }, [allorder]);
+
+  useEffect(() => {
     const calculateOrderCounts = () => {
       let pendingCount = 0;
       let completedCount = 0;
@@ -203,50 +306,89 @@ const Profile = () => {
         ...prevData,
         ordersCompleted: completedCount,
         ordersPending: pendingCount,
-        ordersDispatched: dispatchedCount, // Update dispatched count
-        totalRevenue, // Update total revenue
+        ordersDispatched: dispatchedCount,
+        totalRevenue,
       }));
     };
 
-    calculateOrderCounts();
+    if (Array.isArray(orders)) {
+      calculateOrderCounts();
+    }
   }, [orders]);
 
-  const handleDispatchedChange = (orderIndex, productIndex) => {
-    const updatedOrders = [...orders];
-    const product = updatedOrders[orderIndex].products[productIndex];
-    product.dispatched = !product.dispatched;
-
-    // If dispatched is set to true, completed must be false
-    if (product.dispatched) {
-      product.completed = false;
-    }
-
-    setOrders(updatedOrders);
+  const handleDispatchedChange = (orderIndex, productIndex, userorderid, productid) => {
+    setOrders(prevOrders => {
+      const newOrders = prevOrders.map((order, idx) => {
+        if (idx === orderIndex) {
+          const newProducts = order.products.map((product, pIdx) => {
+            if (pIdx === productIndex) {
+              const newStatus = {
+                dispatched: !product.dispatched,
+              };
+              dispatch(setOrderStatusAsync({ userorderid, productid, newStatus }));
+              return {
+                ...product,
+                dispatched: !product.dispatched,
+                completed: product.dispatched ? false : product.completed,
+              };
+            }
+            return product;
+          });
+          return {
+            ...order,
+            products: newProducts,
+          };
+        }
+        return order;
+      });
+      return newOrders;
+    });
   };
 
-  const handleCompletedChange = (orderIndex, productIndex) => {
-    const updatedOrders = [...orders];
-    const product = updatedOrders[orderIndex].products[productIndex];
-    product.completed = !product.completed;
+  const handleCompletedChange = (orderIndex, productIndex, userorderid, productid) => {
+    setOrders(prevOrders => {
+      const newOrders = prevOrders.map((order, idx) => {
+        if (idx === orderIndex) {
+          const newProducts = order.products.map((product, pIdx) => {
+            if (pIdx === productIndex) {
+              const newStatus = {
+                completed: !product.completed
+              };
+              dispatch(setOrderStatusAsync({ userorderid, productid, newStatus }));
+              return {
+                ...product,
+                completed: !product.completed,
+                dispatched: !product.completed ? true : product.dispatched,
+              };
+            }
+            return product;
+          });
+          return {
+            ...order,
+            products: newProducts,
+          };
+        }
+        return order;
+      });
+      return newOrders;
+    });
+  };
 
-    // Lock both dispatched and completed checkboxes once completed is true
-    if (product.completed) {
-      product.dispatched = false;
-    }
-
-    setOrders(updatedOrders);
+  const handleEditClick = (orderIndex, productIndex) => {
+    setEditableProducts(prevState => ({
+      ...prevState,
+      [`${orderIndex}-${productIndex}`]: !prevState[`${orderIndex}-${productIndex}`],
+    }));
   };
 
   return (
     <div>
       {isAdmin ? (
-        // If admin
         <div className="admin-profile">
           <div className="profile-header">
             <div className="profile-picture-container">
               <img src={adminData.profilePictureUrl} alt="Profile" className="profile-picture" />
             </div>
-
             <div className="profile-info">
               <h2 className="username">{adminData.username}</h2>
             </div>
@@ -257,14 +399,21 @@ const Profile = () => {
                 <h3>Orders Summary</h3>
                 <p>Completed: <span>{adminData.ordersCompleted}</span></p>
                 <p>Pending: <span>{adminData.ordersPending}</span></p>
-                <p>Dispatched: <span>{adminData.ordersDispatched}</span></p> {/* Display dispatched count */}
+                <p>Dispatched: <span>{adminData.ordersDispatched}</span></p>
               </div>
             </Link>
             <div className="summary-box">
               <h3>Total Revenue</h3>
-              <p>$<span>{adminData.totalRevenue.toFixed(2)}</span></p>
+              <p>Rs<span>{adminData.totalRevenue.toFixed(2)}</span></p>
             </div>
           </div>
+
+          <div className="order-status-card">
+            <Link to="/profile/orders">
+              <button className="order-status-button">Check Your Order Status</button>
+            </Link>
+          </div>
+
           <div className="orders-table-container">
             <h3>Order Details</h3>
             <table className="orders-table">
@@ -276,36 +425,41 @@ const Profile = () => {
                   <th>Quantity</th>
                   <th>Dispatched</th>
                   <th>Completed</th>
+                  <th>Edit</th>
                 </tr>
               </thead>
               <tbody>
-                {orders.map((order, orderIndex) => (
+                {orders && Array.isArray(orders) && orders.map((order, orderIndex) => (
                   order.products.map((product, productIndex) => (
-                    <tr key={`${orderIndex}-${productIndex}`}>
-                      {/* Render the username only on the first row of each order */}
+                    <tr key={product.orderid}>
                       {productIndex === 0 && (
                         <td rowSpan={order.products.length}>
                           {order.username}
                         </td>
                       )}
                       <td>{product.name}</td>
-                      <td>${product.price}</td>
+                      <td>Rs{product.price}</td>
                       <td>{product.quantity}</td>
                       <td>
                         <input
                           type="checkbox"
                           checked={product.dispatched}
-                          disabled={product.completed}
-                          onChange={() => handleDispatchedChange(orderIndex, productIndex)}
+                          disabled={!editableProducts[`${orderIndex}-${productIndex}`] || product.completed}
+                          onChange={() => handleDispatchedChange(orderIndex, productIndex, order.userOrderid, product.orderid)}
                         />
                       </td>
                       <td>
                         <input
                           type="checkbox"
                           checked={product.completed}
-                          disabled={product.completed}
-                          onChange={() => handleCompletedChange(orderIndex, productIndex)}
+                          disabled={!editableProducts[`${orderIndex}-${productIndex}`]}
+                          onChange={() => handleCompletedChange(orderIndex, productIndex, order.userOrderid, product.orderid)}
                         />
+                      </td>
+                      <td>
+                        <button onClick={() => handleEditClick(orderIndex, productIndex)}>
+                          Edit
+                        </button>
                       </td>
                     </tr>
                   ))
@@ -315,7 +469,6 @@ const Profile = () => {
           </div>
         </div>
       ) : (
-        // If not admin
         <div className="admin-profile">
           <div className="profile-header">
             <div className="profile-picture-container">
@@ -325,6 +478,12 @@ const Profile = () => {
               <h2 className="username">{adminData.username}</h2>
             </div>
           </div>
+
+          <div className="order-status-card">
+            <Link to="/profile/orders">
+              <button className="order-status-button">Check Your Order Status</button>
+            </Link>
+          </div>
         </div>
       )}
     </div>
@@ -332,6 +491,11 @@ const Profile = () => {
 };
 
 export default Profile;
+
+
+
+
+
 
 
 

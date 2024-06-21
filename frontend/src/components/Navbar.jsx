@@ -24,7 +24,7 @@ const Navbar = () => {
   const isLoggedIn= useSelector((state)=> state.user.isLoggedIn);
   const userName = useSelector((state)=> state.user.userName);
   const imageurl= useSelector((state)=> state.user.imageurl);
-  console.log(imageurl);
+  // console.log(imageurl);
   const handleLogout=()=>{
     dispatch(logout());
     window.location.href = './login'
@@ -43,7 +43,7 @@ const Navbar = () => {
  const handleImageClick = () => {
   setShowUserInfo(!showUserInfo);
 };
-console.log(`http://localhost:5000/public${imageurl} `);
+// console.log(`http://localhost:5000/public${imageurl} `);
   return (
     <div className="navbar" ref={navbarRef}>
         <img src="http://localhost:5000/public/thops.png" alt="thops" className="brand" />

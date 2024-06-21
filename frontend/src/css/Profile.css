@@ -49,38 +49,67 @@
     margin: 0;
   }
   
-  .orders-info, .revenue-info {
+  .orders-info {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     gap: 15px;
     margin-top: 20px;
-  }
-  
-  .summary-box {
-    flex: 1;
+    /* flex-wrap: wrap;  */
+}
+
+.order-status-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0; /* Adjust as necessary */
+}
+
+.order-status-button {
+  background-color: #4CAF50; /* Green background */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Box shadow */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.order-status-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+.summary-box {
     padding: 20px;
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1); 
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .summary-box:hover {
+    width: 300px;
+    box-sizing: border-box;
+}
+
+.summary-box:hover {
     transform: translateY(-5px);
-  }
-  
-  .summary-box h3 {
+}
+
+.summary-box h3 {
     font-size: 1.2em;
     font-weight: 600;
     color: #34495e;
     margin-bottom: 10px;
-  }
-  
-  .summary-box p {
+}
+
+.summary-box p {
     font-size: 1.1em;
     color: #2c3e50;
     margin: 5px 0;
-  }
+}
   
   .orders-table-container {
     margin-top: 30px;
@@ -121,6 +150,8 @@
     transform: scale(1.2);
   }
   
+
+
   @media (max-width: 600px) {
     .orders-info, .revenue-info {
       flex-direction: column;

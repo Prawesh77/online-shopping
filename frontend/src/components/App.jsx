@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { fetchProducts } from "../redux/productSlice/productSlice";
 import { loadCartAsync } from "../redux/CartSlice/cartSlice";
 import OrderSummaryProfile from './Profile/OrderSummaryProfile';
+import OrderStatus from './Profile/OrderStatus';
 
 const App = () => {
   const userID = useSelector((state) => state.user.userid);
@@ -23,7 +24,7 @@ const App = () => {
   // ); 
   useEffect(() => {
     // if (status === "idle") {
-      console.log("status idle and dispatched");
+      // console.log("status idle and dispatched");
       dispatch(fetchProducts());
     // }
   });
@@ -33,7 +34,7 @@ const App = () => {
       dispatched(userID);
     }
     // dispatched(userID);
-    console.log("Hello");
+    // console.log("Hello");
   },[userID])
 
 
@@ -62,6 +63,7 @@ const App = () => {
               }
             />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/orders" element={<OrderStatus />} />
             <Route path="/cart" element={<Cart/>} />        
           </Routes>
       </Router>

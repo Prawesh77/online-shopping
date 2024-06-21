@@ -8,7 +8,7 @@ const addToCart = async (productToCart) => {
     return response;
 };
 const loadCart = async (userId) => {
-    console.log(userId);
+    // console.log(userId);
     const response = await axios.get(`${API_URL_LOAD}?userId=${userId}`);
     return response;
 };

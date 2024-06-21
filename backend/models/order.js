@@ -10,10 +10,14 @@ const orderSchema= new mongoose.Schema({
             ref: 'Product',
             required: true,
         },
+        productName:{type: String},
+        imageurl:{type: String},
         quantity: {
             type: Number,
             default: 1,
         },
+        priceUser:{type: Number},
+        priceAdmin:{type: Number},
         deliveryAddress: {
             fullName: { type: String, required: true },
             address: { type: String, required: true },
@@ -23,7 +27,7 @@ const orderSchema= new mongoose.Schema({
       },
       status: {
           type: String,
-          enum: ['pending', 'processing', 'dispatched', 'delivered', 'cancelled'],
+          enum: ['pending', 'processing', 'dispatched', 'delivered', 'completed', 'cancelled'],
           default: 'pending'
         },
       }

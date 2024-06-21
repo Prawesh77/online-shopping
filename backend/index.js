@@ -15,6 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use("/public", express.static(path.join(__dirname, "public")));
 
+
 //Connect to MongoDB
 const mongoURI = 'mongodb://localhost:27017/onlineShopping'; // Replace with your connection string
 mongoose.connect(mongoURI)
@@ -29,6 +30,9 @@ const registerRoutes = require('./routes/registerRoute');
 // const protectedRoutes = require('./routes/protectedRoute');
 const cartRoutes = require('./routes/cartRoute');
 const orderRoutes = require('./routes/orderRoute');
+const categoryRoutes = require('./routes/categoryRoute');
+
+
 
 
 // routes/api points haru define
@@ -38,6 +42,7 @@ app.use('/login', loginRoutes);
 // app.use('/protected', protectedRoutes);
 app.use('/cart', cartRoutes);
 app.use('/order', orderRoutes);
+app.use('/category', categoryRoutes);
 
 
 
