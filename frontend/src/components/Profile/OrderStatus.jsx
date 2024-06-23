@@ -136,10 +136,11 @@ const OrderStatus = () => {
 
   useEffect(() => {
     if (userID) {
-      dispatch(getOrderStatusByIdAsync({ userid: userID }))
+      dispatch(getOrderStatusByIdAsync({ userid: userID, status:'all' }))
+      // dispatch(getOrderStatusByIdAsync({ userid: userID }))
         .then((response) => {
           // Extract orders array from response payload
-          const ordersData = response.payload?.order || [];
+          const ordersData = response.payload;
           setOrders(ordersData);
           setLoading(false); // Set loading to false after fetching data
         })
@@ -149,15 +150,23 @@ const OrderStatus = () => {
         });
     }
   }, [dispatch, userID]);
-
+  console.log(orders);
   const [selectedStatuses, setSelectedStatuses] = useState({
+    accepted:true,
     pending: true,
     dispatched: true,
     completed: true
   });
 
   const handleStatusChange = (status) => {
+    setSelectedStatuses({
+      accepted:false,
+      pending: false,
+      dispatched: false,
+      completed: false
+    });
     setSelectedStatuses((prevStatuses) => ({
+
       ...prevStatuses,
       [status]: !prevStatuses[status]
     }));
@@ -186,6 +195,14 @@ const OrderStatus = () => {
         <label className="status-filter">
           <input
             type="checkbox"
+            checked={selectedStatuses.accepted}
+            onChange={() => handleStatusChange('accepted')}
+          />
+          Accepted
+        </label>
+        <label className="status-filter">
+          <input
+            type="checkbox"
             checked={selectedStatuses.dispatched}
             onChange={() => handleStatusChange('dispatched')}
           />
@@ -206,6 +223,7 @@ const OrderStatus = () => {
             <th>Image</th>
             <th>Product Name</th>
             <th>Quantity</th>
+            <th>Price</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -215,6 +233,7 @@ const OrderStatus = () => {
               <td><img src={`http://localhost:5000/public${order.imageurl}`} alt="Product" className="product-image" /></td>
               <td>{order.productName}</td>
               <td>{order.quantity}</td>
+              <td>{(order.status==='pending')?order.priceUser:order.priceAccepted }</td>
               <td>{order.status}</td>
             </tr>
           ))}

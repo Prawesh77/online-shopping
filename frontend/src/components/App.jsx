@@ -14,7 +14,8 @@ import { fetchProducts } from "../redux/productSlice/productSlice";
 import { loadCartAsync } from "../redux/CartSlice/cartSlice";
 import OrderSummaryProfile from './Profile/OrderSummaryProfile';
 import OrderStatus from './Profile/OrderStatus';
-import Bargain from './Profile/Bargain';
+import BargainAdmin from './Profile/BargainAdmin';
+import BargainUser from './Profile/BargainUser';
 
 const App = () => {
   const userID = useSelector((state) => state.user.userid);
@@ -63,10 +64,19 @@ const App = () => {
                 </AdminRoute>
               }
             />
+            <Route
+              path="/profile/bargainadmin"
+              element={
+                <AdminRoute>
+                  <BargainAdmin/>
+                </AdminRoute>
+              }
+            />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/orders" element={<OrderStatus />} />
             <Route path="/cart" element={<Cart/>} />
-            <Route path="/profile/bargain" element={<Bargain/>} />        
+
+            <Route path="/profile/bargainuser" element={<BargainUser/>} />        
           </Routes>
       </Router>
     </>

@@ -62,7 +62,7 @@ app.post('/', async (req, res) => {
         // console.log(typeof(priceUser),typeof(product.details.price.toString()))
         // console.log(priceUser && (priceUser === product.details.price.toString()))
         // console.log('.............................')
-        let statusCheck = priceUser && (priceUser === product.details.price.toString());
+        let statusCheck = !priceUser || (priceUser === product.details.price.toString());
         console.log(statusCheck);
         let status = statusCheck ? 'accepted' : 'pending';
         // Find an existing pending order for this user
@@ -263,16 +263,70 @@ app.get('/all-order-details', async (req, res) => {
 
 
 //to get order of user using their userid
+// app.post('/get-orderr', async (req, res) => {
+//     try {
+//         console.log("From get-order");
+//         console.log(req.body);
+//         const { userid } = req.body;
+//         console.log(userid);
+
+//         // Validate request body
+//         if (!userid) {
+//             return res.status(400).json({ message: 'User ID is required' });
+//         }
+
+//         // Validate userid format
+//         if (!mongoose.Types.ObjectId.isValid(userid)) {
+//             return res.status(400).json({ message: 'Invalid user ID format' });
+//         }
+
+//         const userIdObj = new mongoose.Types.ObjectId(userid);
+
+//         // Find the user and get their orderId(s)
+//         const user = await User.findById(userIdObj).lean();
+
+//         if (!user) {
+//             return res.status(404).json({ message: 'User not found' });
+//         }
+
+//         // If the user schema holds a single orderId as a string
+//         const orderId = user.orderId ? new mongoose.Types.ObjectId(user.orderId) : null;
+
+//         if (!orderId) {
+//             return res.status(404).json({ message: 'No order ID found for this user' });
+//         }
+
+//         // Fetch the orders using the orderId
+//         const order = await Order.findOne({ _id: orderId })
+//             .select('-userid -_id -__v -order.productId') // Exclude the userid, _id, and __v fields from the response
+//             .lean();
+
+//         if (order.length === 0 || order.length === 'null') {
+//             return res.status(404).json({ message: 'No orders found for this user' });
+//         }
+//         console.log(order);
+//         return res.status(200).json(order);
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ message: 'Internal server error' });
+//     }
+// });
+
+
 app.post('/get-order', async (req, res) => {
     try {
         console.log("From get-order");
         console.log(req.body);
-        const { userid } = req.body;
-        console.log(userid);
+        const { userid, status } = req.body;
+        console.log(userid, status);
 
         // Validate request body
         if (!userid) {
             return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        if (!status) {
+            return res.status(400).json({ message: 'Status is required' });
         }
 
         // Validate userid format
@@ -280,32 +334,61 @@ app.post('/get-order', async (req, res) => {
             return res.status(400).json({ message: 'Invalid user ID format' });
         }
 
+        // Validate status
+        const validStatuses = ['pending', 'accepted', 'dispatched', 'delivered', 'completed', 'cancelled', 'all'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: 'Invalid status' });
+        }
+
         const userIdObj = new mongoose.Types.ObjectId(userid);
 
-        // Find the user and get their orderId(s)
+        // Check if user exists
         const user = await User.findById(userIdObj).lean();
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // If the user schema holds a single orderId as a string
-        const orderId = user.orderId ? new mongoose.Types.ObjectId(user.orderId) : null;
-
-        if (!orderId) {
-            return res.status(404).json({ message: 'No order ID found for this user' });
+        let query;
+        if (status === 'all') {
+            // If status is 'all', fetch all orders for the user
+            query = { userid: userIdObj };
+        } else {
+            // Otherwise, fetch orders with the specific status
+            query = {
+                userid: userIdObj,
+                'order.status': status // Match the status in the order array
+            };
         }
 
-        // Fetch the orders using the orderId
-        const order = await Order.findOne({ _id: orderId })
-            .select('-userid -_id -__v -order.productId') // Exclude the userid, _id, and __v fields from the response
-            .lean();
+        // Find orders by user ID and status or all
+        const orders = await Order.find(query, {
+            _id: 1, // Include _id to use as order ID
+            order: 1 // Include all order details
+        }).lean();
 
-        if (order.length === 0 || order.length === 'null') {
-            return res.status(404).json({ message: 'No orders found for this user' });
+        if (!orders.length) {
+            return res.status(404).json({ message: status === 'all' ? 'No orders found for this user' : `No orders found with status '${status}' for this user` });
         }
-        console.log(order);
-        return res.status(200).json(order);
+
+        // Restructure the data as per the required format
+        const responseData = orders.flatMap(order => {
+            return order.order.map(product => ({
+                orderid: order._id,
+                deliveryAddress: product.deliveryAddress,
+                imageurl: product.imageurl,
+                priceAccepted: product.priceAccepted,
+                priceUser: product.priceUser,
+                priceAdmin: product.priceAdmin,
+                productName: product.productName,
+                quantity: product.quantity,
+                status: product.status,
+                _id: product._id
+            }));
+        });
+
+        console.log(responseData);
+        return res.status(200).json(responseData);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
@@ -319,7 +402,7 @@ app.post('/get-order', async (req, res) => {
 app.put('/update-status', async (req, res) => {
     try {
       // Destructure request body
-      const { userorderid, productid, newStatus} = req.body;
+      const { userorderid, productid, newStatus, role} = req.body;
       console.log("1",newStatus.dispatched === false);
       console.log("2",newStatus.dispatched === true);
       console.log("3",newStatus.completed === true);
@@ -347,7 +430,7 @@ app.put('/update-status', async (req, res) => {
       // Update the status based on newStatus conditions
       if (newStatus.dispatched === false) {
         console.log("newStatus.dispatched === false")
-        productOrder.status = 'pending';
+        productOrder.status = 'accepted';
       } else if (newStatus.dispatched === true) {
         console.log("newStatus.dispatched === true")
         productOrder.status = 'dispatched';
@@ -374,7 +457,13 @@ app.put('/update-status', async (req, res) => {
       if(newStatus.accepted === true){
         console.log("newStatus.accepted === true");
         productOrder.status = 'accepted';
-        productOrder.priceAccepted = productOrder.priceUser;
+        console.log("role === 'admin':",role === 'admin');
+        if(role === 'admin'){
+            productOrder.priceAccepted = productOrder.priceUser;
+        }else{
+            productOrder.priceAccepted = productOrder.priceAdmin;
+        }
+
       }
   
       // Save the updated order document
@@ -389,6 +478,52 @@ app.put('/update-status', async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+
+
+
+  // to bargain, set Price in respective fields priceUser or priceAdmin
+  app.put('/bargainOrder', async (req, res) => {
+    const { userOrderId, productId, editedPrice, role } = req.body;
+    console.log(req.body);
+    console.log(userOrderId);
+    // Validate inputs
+    if (!userOrderId || !productId || !editedPrice || !role) {
+        return res.status(400).json({ error: 'All fields are required.' });
+    }
+    if (!['admin', 'user'].includes(role)) {
+        return res.status(400).json({ error: 'Invalid role specified.' });
+    }
+
+    try {
+        // Find the order by userOrderId
+        const order = await Order.findById(userOrderId);
+        if (!order) {
+            return res.status(404).json({ error: 'Order not found.' });
+        }
+
+        // Find the product within the order
+        const product = order.order.find(item => item._id.toString() === productId);
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found in the order.' });
+        }
+
+        // Update the price based on the role
+        if (role === 'admin') {
+            product.priceAdmin = editedPrice;
+        } else if (role === 'user') {
+            product.priceUser = editedPrice;
+        }
+
+        // Save the updated order
+        await order.save();
+
+        return res.status(200).json({ message: 'Price updated successfully.' });
+    } catch (error) {
+        console.error('Error updating price:', error);
+        return res.status(500).json({ error: 'An error occurred while updating the price.' });
+    }
+});
+
 
 
 module.exports = app;
