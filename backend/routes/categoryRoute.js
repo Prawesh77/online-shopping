@@ -11,7 +11,7 @@ app.get('/', async (req, res) => {
   });
   
   // Add Category
-  app.post('/add-category', async (req, res) => {
+app.post('/add-category', async (req, res) => {
     const { value, label } = req.body;
   
     try {

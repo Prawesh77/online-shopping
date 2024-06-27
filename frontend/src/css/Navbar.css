@@ -1,79 +1,65 @@
-/* .navbar{
-    display: flex;
-    flex: 1;
-    background-color: rgb(4, 133, 90);
-    justify-content: space-between;
-    height: 60px;
-    align-items: center;
-}
-.brand{
-    margin-left: 5vw;
-    height:40px;
-    width:auto;
-}
-.in_navbar{
-    margin-left: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+body {
+    font-family: sans-serif;
+    background-color: var(--body-bg-color);
+    margin: 0;
+    padding: 0;
 }
 
-.link{
-    margin-left: 50px;
-    color: rgb(199, 226, 233);
-    font-size: 20px;
-    font-weight: 700;
-}
-.login_link{
-    margin-right: 100px;
-    background-color: none;;
-}
-.logout_link{
-    background-color: none;
-    margin: 0 50px 0 0;
-}
-.your_name{
-    margin: 0 20px 0 50px;
-}
-.for_cart{
-    position: relative;  
-    display: inline-block;
-}
-.nav_cart{
-    cursor: pointer; 
-    font-size: 30px;
-    background-color: rgb(0, 0, 0);
-    border-radius: 10px;
-    color:white;
-    margin-right: 20px;
-}
-.cart_num{
-    position: absolute;
-    top: -10px; 
-    right: 10px; 
-    background-color: red; 
-    color: white; 
-    border-radius: 50%; 
-    padding: 2px 6px; 
-    font-size: 12px;
-} */
- 
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--navbar-bg-color);
-    padding: 0.2rem 2rem;
-    color: var(--navbar-text-color);
+    background-color: var(--primary-color);
+    border-radius: 10px;
+    height:70px;
+    margin:0 5px;
+    padding: 10px 20px;
+    position: relative;
+    box-shadow: 0px 1px 10px var(--secondary-color);
     transition: all 0.3s ease-in-out;
+    z-index: 100;
 }
 
-.navbar .brand {
-    height: 50px;
-    cursor: pointer;
+.brand {
+    height: 40px;
+    width: auto;
 }
 
-.navbar .profilepic{
+.in_navbar {
+    display: flex;
+    align-items: center;
+}
+
+.links {
+    display: flex;
+    gap: 15px;
+}
+
+.link {
+    text-decoration: none;
+    color: var(--black-txt-color);
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.link:hover {
+    color: var(--nav-txt-hover);
+}
+
+.login_link {
+    background-color: var(--login-bg);
+    padding: 0.5rem 1rem;
+    color: var(--white-txt-color);
+    border-radius: 17px;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.navbar .profile-pic{
     height: 45px;
     width: 50px;
     object-fit: contain;
@@ -81,113 +67,81 @@
     border-radius: 50%;
     transition: transform 0.3s ease-in-out;
 }
-.navbar .profilepic:hover{
+.navbar .profile-pic:hover{
    transform: scale(1.2);
 }
 
-.navbar .in_navbar {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    position: relative;
-}
-.user_info {
+.user-info {
     display: none;
-    flex-direction: column;
-    align-items: flex-start;
     position: absolute;
-    left: 168px;
-    background-color: black;
-    padding: 0.5rem;
-    border-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    top: 50px;
+    left: 0;
+    background-color: #e4e4e4;
+    border: 1px solid #8a8383;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+    padding: 10px 30px 10px 10px;
+    width: auto;
     z-index: 1000;
 }
-  .user_info.active {
+
+.user-info.active {
     display: flex;
+    flex-direction: column;
 }
 
-.navbar .links {
-    display: flex;
-    gap: 1.5rem;
+.your-name {
+    margin: 0;
+    margin: 7px 0px 10px 0;
+    font-size: 16px;
+    color: black;
+    text-align: center;
 }
 
-.navbar .link {
-    text-decoration: none;
-    color: var(--navbar-text-color);
-    font-size: 1.2rem;
-    font-weight: 600;
-    transition: color 0.2s ease-in-out;
-    margin: auto;
-}
-
-.navbar .link:hover {
-    color: var(--navbar-link-hover-color);
-}
-
-.navbar .login_link {
-    padding: 0.5rem 1rem;
-    background-color: var(--login-btn-bg-color);
+.logout-link {
+    display: block;
+    background-color: var(--secondary-button-color);
+    margin: 10px 0px;
+    padding: 7px 10px;
+    margin: 2px;
+    color: var(--white);
     border: none;
     border-radius: 4px;
-    color: var(--navbar-text-color);
-    text-transform: uppercase;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.navbar .login_link:hover {
-    background-color: var(--login-btn-hover-color);
-}
-
-.navbar .your_name {
-    margin: 5px 0;
-    font-size: 1rem;
-    color: var(--your-name-color);
-}
-
-.navbar .logout_link {
-    padding: 0.3rem 0.5rem;
-    background-color: var(--logout-btn-bg-color);
-    border: none;
-    border-radius: 4px;
-    color: var(--navbar-text-color);
-    text-transform: uppercase;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.navbar .logout_link:hover {
-    background-color: var(--logout-btn-hover-color);
-}
-
-.navbar .for_cart {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.for-cart {
     position: relative;
+    margin-left: 20px;
 }
 
-.navbar .nav_cart {
-    font-size: 1.8rem;
-    color: var(--navbar-text-color);
-    cursor: pointer;
-    background-color: var(--cart-icon-bg-color);
-    border-radius: 20%;
+.nav-cart {
+    font-size: 25px;
+    color: var(--black-txt-color);
 }
 
-.navbar .cart_num {
-    background-color: var(--cart-num-bg-color);
-    border-radius: 50%;
-    padding: 0.3rem 0.5rem;
-    color: var(--cart-num-text-color);
-    font-size: 0.8rem;
+.cart-num {
     position: absolute;
-    top: -15px; 
-    right: -12px; 
-    transition: transform 0.3s ease-in-out;
+    top: -10px;
+    right: -10px;
+    background-color: var(--secondary-button-color);
+    color: white;
+    border-radius: 40%;
+    padding: 5px;
+    font-size: 10px;
 }
 
-.navbar .cart_num:hover {
-    transform: scale(1.5);
+.cart-num-none {
+    display: none;
+}
+.dark-mode-btn {
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 20px;
+    padding: 0.5rem 0.5rem;
+    border-radius: 10px;
+    color: var(--white);
+    border: none;
+    background-color: var(--primary-button-color);
+    transition: color 0.3s ease-in-out;
 }

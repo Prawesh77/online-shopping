@@ -1,39 +1,60 @@
 .bargain-container {
+    margin: 0 5px;
+    border-radius: 10px;
     padding: 20px;
     font-family: Arial, sans-serif;
+    background-color: var(--primary-color);
+    min-height: calc(100vh - 70px);
 }
 
-table {
+.bargain-container table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    background-color: var(--primary-color);
 }
 
-th, td {
+.bargain-container th, td {
+    color: var(--black-txt-color);
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
 }
 
-th {
-    background-color: #f4f4f4;
+.bargain-container th {
+    padding: 20px;
+    background-color: var(--tertiary-color);
 }
 
-button {
+.bargain_edit, .bargain_accept, .bargain_cancel {
     padding: 5px 10px;
     margin: 2px;
-    background-color: #007bff;
-    color: white;
+    color: var(--white);
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
-
-button:hover {
-    background-color: #0056b3;
+.bargain_edit{
+    background-color: var(--primary-button-color);
+}
+.bargain_accept{
+    background-color: var(--green-button-color);
+}
+.bargain_cancel{
+    background-color: var(--secondary-button-color);
 }
 
-input[type="text"] {
+.bargain-container .bargain_edit:hover {
+    background-color: var(--primary-button-hover);
+}
+.bargain-container .bargain_accept:hover {
+    background-color: var(--green-button-hover);
+}
+.bargain-container .bargain_cancel:hover {
+    background-color: var(--secondary-button-hover);
+}
+
+.bargain-container input[type="text"] {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;

@@ -166,7 +166,6 @@ const BargainUser = () => {
 
     const [editing, setEditing] = useState(null);
     const [editedPrice, setEditedPrice] = useState();
-
     const handleEditClick = (index) => {
         setEditing(index);
         const product = data[index];
@@ -177,12 +176,12 @@ const BargainUser = () => {
         setEditedPrice(e.target.value);
     };
 
-    const handlePriceSave = (index, userOrderId, productId) => {
+    const handlePriceSave = (index, userOrderId, order_id) => {
         const updatedData = data.map((product, i) => {
             if (i === index) {
                 console.log("edited:", editedPrice);
                 // Dispatch action with role 'user'
-                dispatch(bargainOrderAsync({ userOrderId, productId, editedPrice, role: 'user' }));
+                dispatch(bargainOrderAsync({ userOrderId, order_id, editedPrice, role: 'user' }));
 
                 return { ...product, priceUser: editedPrice };
             }
@@ -192,30 +191,32 @@ const BargainUser = () => {
         setEditing(null);
     };
 
-    const handleAcceptStatusChange = (index, userorderid, productid) => {
-      setEditedPrice(allorder.priceUser);
-      if(editedPrice>=allorder.priceAdmin){
-        const updatedData = data.map((product, i) => {
-          if (i === index) {
-              const newStatus = { accepted: true };
-              dispatch(setOrderStatusAsync({ userorderid, productid, newStatus }));
-              return { ...product, status: 'accepted' };
-          }
-          return product;
-      }).filter(product => product.status !== 'accepted');
-      setData(updatedData);
+    const handleAcceptStatusChange = (index, userorderid, order_id) => {
+       
+        const userResponse = window.confirm("Seller has not responded with a price. If you accept, the original price will be accepted.");
+
+          if(userResponse){
+                const updatedData = data.map((product, i) => {
+                if (i === index) {
+                    const newStatus = { accepted: true };
+                    dispatch(setOrderStatusAsync({ userorderid, order_id, newStatus }));
+                    return { ...product, status: 'accepted' };
+                }
+                return product;
+            }).filter(product => product.status !== 'accepted');
+            setData(updatedData);
       }else{
-          alert("You cannot accept below the seller's price");
+          alert("Wait until seller respond then");
           
       }
       
     };
 
-    const handleCancelStatusChange = (index, userorderid, productid) => {
+    const handleCancelStatusChange = (index, userorderid, order_id) => {
         const updatedData = data.map((product, i) => {
             if (i === index) {
                 const newStatus = { cancelled: true };
-                dispatch(setOrderStatusAsync({ userorderid, productid, newStatus }));
+                dispatch(setOrderStatusAsync({ userorderid, order_id, newStatus }));
                 return { ...product, status: 'cancelled' };
             }
             return product;
@@ -260,20 +261,20 @@ const BargainUser = () => {
                             <td>{product.priceAdmin}</td>
                             <td>
                                 {editing === index ? (
-                                    <button onClick={() => handlePriceSave(index, product.orderid, product._id)}>Send Your Price</button>
+                                    <button className="bargain_edit" onClick={() => handlePriceSave(index, product.orderid, product._id)}>Send Your Price</button>
                                 ) : (
-                                    <button onClick={() => handleEditClick(index)}>Edit Your Price</button>
+                                    <button className="bargain_edit" onClick={() => handleEditClick(index)}>Edit Your Price</button>
                                 )}
                             </td>
                             <td>
-                                <button
-                                    onClick={() => handleAcceptStatusChange(index, product.orderid, product._id)}
+                                <button className="bargain_accept"
+                                    onClick={() => handleAcceptStatusChange(index, product.orderid, product._id, product.priceAdmin)}
                                 >
                                     Accept Sellers Price
                                 </button>
                             </td>
                             <td>
-                                <button
+                                <button className="bargain_cancel"
                                     onClick={() => handleCancelStatusChange(index, product.orderid, product._id)}
                                 >
                                     Cancel Your Order

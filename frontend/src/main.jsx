@@ -8,8 +8,7 @@ import './css/index.css'
 ReactDOM.createRoot(document.getElementById('root')).render(
       <React.StrictMode>
             {/* <Provider> chahi state management ko lagi */}
-            <Provider store={store}>   
-                 
+            <Provider store={store}>
                   <App />
             </Provider>
             

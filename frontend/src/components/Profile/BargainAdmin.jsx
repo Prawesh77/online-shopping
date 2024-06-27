@@ -187,7 +187,7 @@ const BargainAdmin = () => {
     const userName = useSelector((state) => state.user.userName);
     const userID = useSelector((state) => state.user.userid);
     const allorder = useSelector((state) => state.order.allorder);
-
+    console.log(allorder);
     useEffect(() => {
         if (isAdmin) {
             dispatch(getAllOrderAsync('pending'));
@@ -217,14 +217,14 @@ const BargainAdmin = () => {
         setEditedPrice(e.target.value);
     };
 
-    const handlePriceSave = (username, index, userOrderId, productId) => {
+    const handlePriceSave = (username, index, userOrderId, order_id) => {
         const updatedData = data.map(user => {
             if (user.username === username) {
                 const updatedProducts = user.products.map((product, i) => {
                     if (i === index) {
                         console.log("edited:", editedPrice);
                         //dispatch 
-                        dispatch(bargainOrderAsync({userOrderId, productId, editedPrice,role:'admin'}));
+                        dispatch(bargainOrderAsync({userOrderId, order_id, editedPrice,role:'admin'}));
 
                         return { ...product, yourPrice: editedPrice };
                     }
@@ -238,11 +238,11 @@ const BargainAdmin = () => {
         setEditing(null);
     };
 
-    const handleAcceptStatusChange = (username, index, userorderid, productid) => {
+    const handleAcceptStatusChange = (username, index, userorderid, order_id) => {
         const updatedData = data.map(user => {
             if (user.username === username) {
                 const newStatus = { accepted: true };
-                dispatch(setOrderStatusAsync({ userorderid, productid, newStatus, role:'admin'}));
+                dispatch(setOrderStatusAsync({ userorderid, order_id, newStatus, role:'admin'}));
                 const updatedProducts = user.products.filter((_, i) => i !== index);
                 return { ...user, products: updatedProducts };
             }
@@ -251,11 +251,11 @@ const BargainAdmin = () => {
         setData(updatedData);
     };
 
-    const handleCancelStatusChange = (username, index, userorderid, productid) => {
+    const handleCancelStatusChange = (username, index, userorderid, order_id) => {
         const updatedData = data.map(user => {
             if (user.username === username) {
                 const newStatus = { cancelled: true };
-                dispatch(setOrderStatusAsync({ userorderid, productid, newStatus, role:'admin'}));
+                dispatch(setOrderStatusAsync({ userorderid, order_id, newStatus, role:'admin'}));
                 const updatedProducts = user.products.filter((_, i) => i !== index);
                 return { ...user, products: updatedProducts };
             }
@@ -285,7 +285,7 @@ const BargainAdmin = () => {
                         user.products.map((product, productIndex) => (
                             <tr key={product.orderid}>
                                 {productIndex === 0 && (
-                                    (isAdmin && user.username === userName)? <td rowSpan={user.products.length}>{user.username}<br/>(Your's)</td> : <td rowSpan={user.products.length}>{user.username}</td>
+                                    (isAdmin && user.username === userName)? <td rowSpan={user.products.length}>{user.username}<br/>(Your&apos;s)</td> : <td rowSpan={user.products.length}>{user.username}</td>
                                     
                                 )}
                                 <td>{product.brand}</td>
@@ -305,20 +305,20 @@ const BargainAdmin = () => {
                                 <td>{product.buyersPrice}</td>
                                 <td>
                                     {editing && editing.username === user.username && editing.index === productIndex ? (
-                                        <button onClick={() => handlePriceSave(user.username, productIndex, user.userOrderid, product.orderid)}>Send Your Price</button>
+                                        <button className="bargain_edit" onClick={() => handlePriceSave(user.username, productIndex, user.userOrderid, product.orderid)}>Send Your Price</button>
                                     ) : (
-                                        <button onClick={() => handleEditClick(user.username, productIndex)}>Edit Your Price</button>
+                                        <button className="bargain_edit" onClick={() => handleEditClick(user.username, productIndex)}>Edit Your Price</button>
                                     )}
                                 </td>
                                 <td>
-                                    <button
+                                    <button className="bargain_accept"
                                         onClick={() => handleAcceptStatusChange(user.username, productIndex, user.userOrderid, product.orderid)}
                                     >
                                         Accept Buyers Price
                                     </button>
                                 </td>
                                 <td>
-                                    <button
+                                    <button className="bargain_cancel"
                                         onClick={() => handleCancelStatusChange(user.username, productIndex, user.userOrderid, product.orderid)}
                                     >
                                         Cancel The Order

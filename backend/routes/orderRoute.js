@@ -30,13 +30,11 @@ app.post('/', async (req, res) => {
     const { userid, order } = req.body;
     const { productId, quantity, deliveryAddress, priceUser } = order;
     deliveryAddress.contactNo = parseInt(deliveryAddress.contactNo);
-    // let status = priceUser ? 'pending' : 'accepted';
     console.log(req.body);
-
     const userIdObj = new mongoose.Types.ObjectId(userid);
     const productIdObj = new mongoose.Types.ObjectId(productId);
 
-    try {
+    try{
         // Validate request body
         if (!userid || !productId || !quantity || !deliveryAddress) {
             return res.status(400).json({ message: 'All fields are required' });
@@ -48,46 +46,38 @@ app.post('/', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Find the product
-        const product = await Product.findById(productIdObj);
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
 
-        // Check if the product is in stock
-        if (product.instock < quantity) {
-            return res.status(400).json({ message: 'Not enough stock available' });
-        }
-        // console.log('.............................')
-        // console.log(typeof(priceUser),typeof(product.details.price.toString()))
-        // console.log(priceUser && (priceUser === product.details.price.toString()))
-        // console.log('.............................')
+        const product = await Product.findById(productIdObj);
+        console.log(product);
+
+
         let statusCheck = !priceUser || (priceUser === product.details.price.toString());
         console.log(statusCheck);
         let status = statusCheck ? 'accepted' : 'pending';
-        // Find an existing pending order for this user
-        let order = await Order.findOne({ userid: userIdObj, 'order.status': 'pending' });
 
-        if (order) {
-            // Check if the product is already in the user's pending order
-            const existingProductOrder = order.order.find(
-                item => item.productId.toString() === productIdObj.toString() && item.status === 'pending'
-            );
-            // console.log(existingProductOrder);
-            if (existingProductOrder) {
-                // Check if delivery addresses match before updating quantity
-                const existingDeliveryAddress = existingProductOrder.deliveryAddress.toObject();
-                detailedCompare(existingDeliveryAddress, deliveryAddress);
-                if (JSON.stringify(existingDeliveryAddress)=== JSON.stringify(deliveryAddress) && existingProductOrder.priceUser.toString()=== priceUser ) {
-                    // Update the existing order quantity if addresses match and product is in stock
-                    if (product.instock >= existingProductOrder.quantity) {
-                        existingProductOrder.quantity += quantity;
-                    } else {
-                        return res.status(400).json({ message: 'Not enough stock available' });
-                    }
-                } else {
-                    // If delivery addresses don't match, create a new order entry
-                    order.order.push({
+        
+        //user ko order xa ya xaina?
+        //if cha then push in that else create new
+        let order = await Order.findOne({ userid: userIdObj});
+        console.log(order);
+        if(order){
+            order.order.push({
+                productId: productIdObj,
+                productName: product.details.name,
+                imageurl: product.imageurl,
+                quantity: quantity,
+                priceUser: priceUser ? parseFloat(priceUser) : null,
+                priceAccepted: status==='accepted'?product.details.price:null,
+                deliveryAddress: deliveryAddress,
+                status: status,
+            });
+
+        }
+        else{
+            order = new Order({
+                userid: userIdObj,
+                order: [
+                    {
                         productId: productIdObj,
                         productName: product.details.name,
                         imageurl: product.imageurl,
@@ -96,58 +86,10 @@ app.post('/', async (req, res) => {
                         priceAccepted: status==='accepted'?product.details.price:null,
                         deliveryAddress,
                         status,
-                    });
-                }
-            } else {
-                // Add the new product to the existing pending order
-                order.order.push({
-                    productId: productIdObj,
-                    productName: product.details.name,
-                    imageurl: product.imageurl,
-                    quantity,
-                    priceUser: statusCheck ? null : parseFloat(priceUser),
-                    priceAccepted: statusCheck?product.details.price:null,
-                    deliveryAddress,
-                    status,
-                });
-            }
-        } else {
-            // Check for orders with a different status
-            order = await Order.findOne({ userid: userIdObj });
-
-            if (order) {
-                // Add new product to the existing order with a different status
-                order.order.push({
-                    productId: productIdObj,
-                    productName: product.details.name,
-                    imageurl: product.imageurl,
-                    quantity,
-                    priceUser: priceUser ? parseFloat(priceUser) : null,
-                    priceAccepted: status==='accepted'?product.details.price:null,
-                    deliveryAddress,
-                    status,
-                });
-            } else {
-                // Create a new order for the user
-                order = new Order({
-                    userid: userIdObj,
-                    order: [
-                        {
-                            productId: productIdObj,
-                            productName: product.details.name,
-                            imageurl: product.imageurl,
-                            quantity,
-                            priceUser: priceUser ? parseFloat(priceUser) : null,
-                            priceAccepted: status==='accepted'?product.details.price:null,
-                            deliveryAddress,
-                            status,
-                        },
-                    ],
-                });
-            }
+                    },
+                ],
+            });
         }
-
-        // Save the order
         await order.save();
 
         // Update the user's order list in the User schema
@@ -159,21 +101,168 @@ app.post('/', async (req, res) => {
         await product.save();
 
         return res.status(200).json({ message: 'Order placed successfully' });
-    } catch (error) {
-        console.error(error);
+
+    }catch(error){
+        console.log("error");
+        console.log(error);
         return res.status(500).json({ message: 'Internal server error' });
     }
-});
+})
+
+
+
+
+// to add the quantity if same delivery address, same status and same priceUser
+
+// app.post('/', async (req, res) => {
+//     const { userid, order } = req.body;
+//     const { productId, quantity, deliveryAddress, priceUser } = order;
+//     deliveryAddress.contactNo = parseInt(deliveryAddress.contactNo);
+//     // let status = priceUser ? 'pending' : 'accepted';
+//     console.log(req.body);
+
+//     const userIdObj = new mongoose.Types.ObjectId(userid);
+//     const productIdObj = new mongoose.Types.ObjectId(productId);
+
+//     try {
+//         // Validate request body
+//         if (!userid || !productId || !quantity || !deliveryAddress) {
+//             return res.status(400).json({ message: 'All fields are required' });
+//         }
+
+//         // Find the user
+//         const user = await User.findById(userIdObj);
+//         if (!user) {
+//             return res.status(404).json({ message: 'User not found' });
+//         }
+
+//         // Find the product
+//         const product = await Product.findById(productIdObj);
+//         const products = await Product.find(productIdObj);
+//         if (!product) {
+//             return res.status(404).json({ message: 'Product not found' });
+//         }
+
+//         // Check if the product is in stock
+//         if (product.instock < quantity) {
+//             return res.status(400).json({ message: 'Not enough stock available' });
+//         }
+//         // console.log('.............................')
+//         // console.log(typeof(priceUser),typeof(product.details.price.toString()))
+//         // console.log(priceUser && (priceUser === product.details.price.toString()))
+//         // console.log('.............................')
+//         let statusCheck = !priceUser || (priceUser === product.details.price.toString());
+//         console.log(statusCheck);
+//         let status = statusCheck ? 'accepted' : 'pending';
+//         // Find an existing pending order for this user
+//         let order = await Order.findOne({ userid: userIdObj, 'order.status': 'pending' });
+
+//         if (order) {
+//             // Check if the product is already in the user's pending order
+//             const existingProductOrder = order.order.find(
+//                 item => item.productId.toString() === productIdObj.toString() && item.status === 'pending'
+//             );
+//             // console.log(existingProductOrder);
+//             if (existingProductOrder) {
+//                 // Check if delivery addresses match before updating quantity
+//                 const existingDeliveryAddress = existingProductOrder.deliveryAddress.toObject();
+//                 detailedCompare(existingDeliveryAddress, deliveryAddress);
+//                 if (JSON.stringify(existingDeliveryAddress)=== JSON.stringify(deliveryAddress) && existingProductOrder.priceUser.toString()=== priceUser ) {
+//                     // Update the existing order quantity if addresses match and product is in stock
+//                     if (product.instock >= existingProductOrder.quantity) {
+//                         existingProductOrder.quantity += quantity;
+//                     } else {
+//                         return res.status(400).json({ message: 'Not enough stock available' });
+//                     }
+//                 } else {
+//                     // If delivery addresses don't match, create a new order entry
+//                     order.order.push({
+//                         productId: productIdObj,
+//                         productName: product.details.name,
+//                         imageurl: product.imageurl,
+//                         quantity,
+//                         priceUser: priceUser ? parseFloat(priceUser) : null,
+//                         priceAccepted: status==='accepted'?product.details.price:null,
+//                         deliveryAddress,
+//                         status,
+//                     });
+//                 }
+//             } else {
+//                 // Add the new product to the existing pending order
+//                 order.order.push({
+//                     productId: productIdObj,
+//                     productName: product.details.name,
+//                     imageurl: product.imageurl,
+//                     quantity,
+//                     priceUser: statusCheck ? null : parseFloat(priceUser),
+//                     priceAccepted: statusCheck?product.details.price:null,
+//                     deliveryAddress,
+//                     status,
+//                 });
+//             }
+//         } else {
+//             // Check for orders with a different status
+//             order = await Order.findOne({ userid: userIdObj });
+
+//             if (order) {
+//                 // Add new product to the existing order with a different status
+//                 order.order.push({
+//                     productId: productIdObj,
+//                     productName: product.details.name,
+//                     imageurl: product.imageurl,
+//                     quantity,
+//                     priceUser: priceUser ? parseFloat(priceUser) : null,
+//                     priceAccepted: status==='accepted'?product.details.price:null,
+//                     deliveryAddress,
+//                     status,
+//                 });
+//             } else {
+//                 // Create a new order for the user
+//                 order = new Order({
+//                     userid: userIdObj,
+//                     order: [
+//                         {
+//                             productId: productIdObj,
+//                             productName: product.details.name,
+//                             imageurl: product.imageurl,
+//                             quantity,
+//                             priceUser: priceUser ? parseFloat(priceUser) : null,
+//                             priceAccepted: status==='accepted'?product.details.price:null,
+//                             deliveryAddress,
+//                             status,
+//                         },
+//                     ],
+//                 });
+//             }
+//         }
+
+//         // Save the order
+//         await order.save();
+
+//         // Update the user's order list in the User schema
+//         user.orderId = order._id.toString();
+//         await user.save();
+
+//         // Decrease product stock
+//         product.instock -= quantity;
+//         await product.save();
+
+//         return res.status(200).json({ message: 'Order placed successfully' });
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ message: 'Internal server error' });
+//     }
+// });
 
 
 // gives all order based on status(accepted for admin profile and pending for bargaining)
 app.get('/all-order-details', async (req, res) => {
     try {
-        // Extract the status from the query parameters
+        // Extract status from the query parameters
         const { status } = req.query;
         let query = {};
         console.log(status);
-        // Adjust the query based on the status parameter
+        // Set the query based on the status parameter
         switch (status) {
             case 'pending':
                 query = { 'order.status': 'pending' };
@@ -343,52 +432,43 @@ app.post('/get-order', async (req, res) => {
         const userIdObj = new mongoose.Types.ObjectId(userid);
 
         // Check if user exists
-        const user = await User.findById(userIdObj).lean();
-
+        const user = await User.findById(userIdObj);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        let query;
-        if (status === 'all') {
-            // If status is 'all', fetch all orders for the user
-            query = { userid: userIdObj };
-        } else {
-            // Otherwise, fetch orders with the specific status
-            query = {
-                userid: userIdObj,
-                'order.status': status // Match the status in the order array
-            };
+        // Find orders by user ID
+        const orders = await Order.find({ userid: userIdObj }).lean();
+
+        if (orders.length === 0) {
+            return res.status(404).json({ message: 'No orders found for this user' });
         }
 
-        // Find orders by user ID and status or all
-        const orders = await Order.find(query, {
-            _id: 1, // Include _id to use as order ID
-            order: 1 // Include all order details
-        }).lean();
-
-        if (!orders.length) {
-            return res.status(404).json({ message: status === 'all' ? 'No orders found for this user' : `No orders found with status '${status}' for this user` });
-        }
-
-        // Restructure the data as per the required format
-        const responseData = orders.flatMap(order => {
-            return order.order.map(product => ({
-                orderid: order._id,
-                deliveryAddress: product.deliveryAddress,
-                imageurl: product.imageurl,
-                priceAccepted: product.priceAccepted,
-                priceUser: product.priceUser,
-                priceAdmin: product.priceAdmin,
-                productName: product.productName,
-                quantity: product.quantity,
-                status: product.status,
-                _id: product._id
-            }));
+        // map use garda filter garesi euta variable maa, tyo filtered variable lai check if length>0 and again map(yei variable lai return)
+        //empty array huna sakney bhayera flatMap use gareko as map doesn't handle empty array automatically
+        const filteredOrders = orders.flatMap(order => {
+            return order.order
+                .filter(product => status === 'all' || product.status === status)
+                .map(product => ({
+                    orderid: order._id,
+                    deliveryAddress: product.deliveryAddress,
+                    imageurl: product.imageurl,
+                    priceAccepted: product.priceAccepted,
+                    priceUser: product.priceUser,
+                    priceAdmin: product.priceAdmin,
+                    productName: product.productName,
+                    quantity: product.quantity,
+                    status: product.status,
+                    _id: product._id
+                }));
         });
 
-        console.log(responseData);
-        return res.status(200).json(responseData);
+        if (filteredOrders.length === 0) {
+            return res.status(404).json({ message: `No orders found with status '${status}' for this user` });
+        }
+
+        console.log(filteredOrders);
+        return res.status(200).json(filteredOrders);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
@@ -402,7 +482,7 @@ app.post('/get-order', async (req, res) => {
 app.put('/update-status', async (req, res) => {
     try {
       // Destructure request body
-      const { userorderid, productid, newStatus, role} = req.body;
+      const { userorderid, order_id, newStatus, role} = req.body; //userorderid= _id of database(one for one user, userid chai haina), order_id= user ko individual order ko _id
       console.log("1",newStatus.dispatched === false);
       console.log("2",newStatus.dispatched === true);
       console.log("3",newStatus.completed === true);
@@ -417,9 +497,12 @@ app.put('/update-status', async (req, res) => {
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
-  
+      
       // Find the specific product in the order array
-      const productOrder = order.order.find(item => item._id.toString() === productid);
+      const productOrder = order.order.find(item => item._id.toString() === order_id);
+      console.log(productOrder.productId);
+      const productIdObj = new mongoose.Types.ObjectId(productOrder.productId);
+      const actualProduct = await Product.findById(productIdObj);
     //   console.log(productOrder);
       // Check if the product in the order is found
       if (!productOrder) {
@@ -445,7 +528,7 @@ app.put('/update-status', async (req, res) => {
         console.log("newStatus.cancelled === true")
         productOrder.status = 'cancelled';
         // Remove the product from the order array
-        order.order = order.order.filter(item => item._id.toString() !== productid);
+        order.order = order.order.filter(item => item._id.toString() !== order_id);
   
         // If no products are left in the order, remove the entire order document
         if (order.order.length === 0) {
@@ -461,7 +544,7 @@ app.put('/update-status', async (req, res) => {
         if(role === 'admin'){
             productOrder.priceAccepted = productOrder.priceUser;
         }else{
-            productOrder.priceAccepted = productOrder.priceAdmin;
+            productOrder.priceAccepted = productOrder.priceAdmin ? productOrder.priceAdmin : actualProduct.details.price;
         }
 
       }
@@ -483,11 +566,11 @@ app.put('/update-status', async (req, res) => {
 
   // to bargain, set Price in respective fields priceUser or priceAdmin
   app.put('/bargainOrder', async (req, res) => {
-    const { userOrderId, productId, editedPrice, role } = req.body;
+    const { userOrderId, order_id, editedPrice, role } = req.body;
     console.log(req.body);
     console.log(userOrderId);
     // Validate inputs
-    if (!userOrderId || !productId || !editedPrice || !role) {
+    if (!userOrderId || !order_id || !editedPrice || !role) {
         return res.status(400).json({ error: 'All fields are required.' });
     }
     if (!['admin', 'user'].includes(role)) {
@@ -502,7 +585,7 @@ app.put('/update-status', async (req, res) => {
         }
 
         // Find the product within the order
-        const product = order.order.find(item => item._id.toString() === productId);
+        const product = order.order.find(item => item._id.toString() === order_id);
         if (!product) {
             return res.status(404).json({ error: 'Product not found in the order.' });
         }

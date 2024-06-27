@@ -69,7 +69,7 @@ const Profile = () => {
     }
   }, [orders]);
 
-  const handleDispatchedChange = (orderIndex, productIndex, userorderid, productid) => {
+  const handleDispatchedChange = (orderIndex, productIndex, userorderid, order_id) => {
     setOrders(prevOrders => {
       const newOrders = prevOrders.map((order, idx) => {
         if (idx === orderIndex) {
@@ -78,7 +78,7 @@ const Profile = () => {
               const newStatus = {
                 dispatched: !product.dispatched,
               };
-              dispatch(setOrderStatusAsync({ userorderid, productid, newStatus }));
+              dispatch(setOrderStatusAsync({ userorderid, order_id, newStatus }));
               return {
                 ...product,
                 dispatched: !product.dispatched,
@@ -98,7 +98,7 @@ const Profile = () => {
     });
   };
 
-  const handleCompletedChange = (orderIndex, productIndex, userorderid, productid) => {
+  const handleCompletedChange = (orderIndex, productIndex, userorderid, order_id) => {
     setOrders(prevOrders => {
       const newOrders = prevOrders.map((order, idx) => {
         if (idx === orderIndex) {
@@ -107,7 +107,7 @@ const Profile = () => {
               const newStatus = {
                 completed: !product.completed
               };
-              dispatch(setOrderStatusAsync({ userorderid, productid, newStatus }));
+              dispatch(setOrderStatusAsync({ userorderid, order_id, newStatus }));
               return {
                 ...product,
                 completed: !product.completed,
@@ -226,7 +226,7 @@ const Profile = () => {
                         />
                       </td>
                       <td>
-                        <button onClick={() => handleEditClick(orderIndex, productIndex)}>
+                        <button className="profile_order_edit_btn" onClick={() => handleEditClick(orderIndex, productIndex)}>
                           Edit
                         </button>
                       </td>

@@ -226,7 +226,8 @@ const Cart = () => {
   };
 
   return (
-    <div>
+    <div className="cartlist">
+      <h2>Your Cart</h2>
       <table className="cart-table">
         <thead>
           <tr>
@@ -237,6 +238,8 @@ const Cart = () => {
             <th className="quantity">Quantity</th>
             <th></th>
             <th>Total</th>
+            <th>Remove</th>
+            <th>Buy</th>
           </tr>
         </thead>
         <tbody>

@@ -1,9 +1,24 @@
+.cartlist{
+  min-height: 100vh;
+  background-color: var(--primary-color);
+  margin: 0 5px;
+  padding-top: 5vh;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+.cartlist h2{
+  margin-left: 20px;
+  color: var(--black-txt-color);
+}
 .cart-table {
+  margin-top: 5vh;
     width: 90vw;
     border-collapse: collapse;
+    background-color: var(--primary-color);
     margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 1px 15px var(--tertiary-color);
     margin: 0 auto;
+    transition: all 0.3s ease-in-out;
   }
   .cart-table .product-image{
     width: 130px;
@@ -14,12 +29,15 @@
 
   .cart-table th,
   .cart-table td {
+    color: var(--black-txt-color);
     padding: 3px;
     border: 1px solid #ddd;
+    transition: all 0.3s ease-in-out;
   }
   
   .cart-table th {
-    background-color: #f5f5f5;
+    background-color:var(--tertiary-color) ;
+    padding: 20px;
     font-weight: bold;
   }
   
@@ -36,16 +54,18 @@
   }
   
   .quantity-button {
+    color: var(--black-txt-color);
     padding: 5px 10px;
     margin: auto 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
     cursor: pointer;
-    background-color: #eee;
+    background-color: var(--tertiary-color);
+    transition: all 0.3s ease-in-out;
   }
   
   .quantity-button:hover {
-    background-color: #ddd;
+    background-color: #818181;
   }
   
   .quantity-input {
@@ -74,25 +94,25 @@
     padding: 8px 15px;
     border: 1px solid #ddd;
     cursor: pointer;
-    background-color: #e03030;
+    background-color: var(--secondary-button-color);
     color: #fff;
     border-radius: 4px;
     font-weight: bold;
   }
   
   .remove-button:hover {
-    background-color: #c02020;
+    background-color: var(--secondary-button-hover);
   }
 
   .order-button{
     padding: 8px 15px;
     border: 1px solid #ddd;
     cursor: pointer;
-    background-color: #36e030;
+    background-color: var(--green-button-color);
     color: #fff;
     border-radius: 4px;
     font-weight: bold;
   }
   .order-button:hover {
-    background-color: #20c020;
+    background-color: var(--green-button-hover);
   }

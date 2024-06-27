@@ -1,77 +1,87 @@
-/* .homee{
-    display: flex;
-    flex:1;
-    position: relative;
-}
- 
-// paila left maa Hello ani right maa welcome huda,
-// how to translate text to the middle 
-.left{
-    width: 50vw;
-    height: calc(100vh - 60px);
-    background-color: rgb(60, 189, 129);
-    position: relative;
-}
-.txt1{
-    position: absolute;
-    top: 35vh;
-    right:0;
-    transform: translateX(50%);
-    z-index: 10;
-    font-size: 25px;
-    font-weight: 800;
-}
-.right{
-    width: 50vw;
-    height: calc(100vh - 60px);
-    background-color: rgb(131, 235, 192);
-    position: relative;
+.home {
+  padding: 0 5px;
 }
 
-.txt2{
-    position: absolute;
-    top: 44vh;
-    z-index: 10;
-    transform: translateX(-50%);
-    font-size: 24px;
-    font-weight: 800;
+.hero {
+  position: relative;
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 70px);
+}
+
+.hero-image {
+  border-radius: 10px;
+  opacity: 0.9;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 70px);
+  z-index: 1;
+}
+
+
+.welcome-section {
+  text-align: center;
+  z-index: 2;
+}
+
+.txt1 {
+  font-size: 16px;
+  margin: 0;
+  color: var(--white);
+}
+
+.admin-badge {
+  background-color: var(--secondary-button-color);
+  color: var(--white);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 8px;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+/* Hero Text */
+.hero-text {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: var(--white);
+  z-index: 2;
 
 }
- */
 
- .homee {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center; 
-    height: 93vh;
-    background-color: var(--white);
-    text-align: center; 
-    transition: all 0.3s ease-in-out;
-  }
-  
-  .homee .txt1 {
-    font-size: 2.5rem;
-    color: var(--black);
-    margin: 0;
-    font-weight: bold;
-  }
-  
-  .homee .txt2 {
-    font-size: 2rem;
-    color: var(--grey);
-    margin: 1rem 0 0 0;
-  }
-  
+.hero-text h1 {
+  font-size: 36px;
+  margin: 0;
+  color: var(--white);
+}
 
-  .homee .admin-badge {
-    background-color: var(--home-admin-badge-bg);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    margin-top: 1rem;
-    font-size: 1rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+.hero-text p {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.shop-now-btn {
+  background-color: var(--primary-button-color);
+  color: var(--white);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease-in-out;
+  margin-top: 10px;
+}
+
+.shop-now-btn:hover {
+  background-color: var(--primary-button-hover);
+}

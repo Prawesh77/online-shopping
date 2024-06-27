@@ -3,9 +3,12 @@
     grid-template-columns: auto auto auto auto auto; 
     grid-column-gap: 10px;
     grid-row-gap: 10px;
+    margin:0 5px;
     padding: 15px;
+    border-radius: 10px;
     position: relative;
-    background-color: var(--white);
+    background-color: var(--primary-color);
+    box-shadow: 0px -1px 10px var(--secondary-color);
     transition: all 0.3s ease-in-out;
 }
 box-icon{
@@ -80,13 +83,12 @@ box-icon{
   padding: 10px;
   margin-bottom: 10px;
   position: relative;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease-in-out;
 }
 
 .maincomp:hover {
   transform: translateY(-5px);
-  box-shadow: 0 2px 12px var(--black);
+  box-shadow: 0 1px 10px var(--secondary-color);
 }
 
 .cart {
@@ -95,9 +97,9 @@ box-icon{
   right: 10px;
   cursor: pointer;
   font-size: 24px;
-  background-color: #007bff;
+  background-color: var(--primary-button-color);
   border-radius: 50%;
-  color: white;
+  color: var(--white);
   padding: 5px;
   display: flex;
   align-items: center;
@@ -106,7 +108,7 @@ box-icon{
 }
 
 .cart:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-button-hover);
 }
 
 .product_img {
@@ -232,20 +234,18 @@ box-icon{
   .filter-container {
     display: flex;
     align-items: center;
+    height:55px;
     /* justify-content: space-between; */
-    margin:0;
+    margin:0 5px;
     padding: 0.5rem 1rem;
     border-radius: 5px;
     background-color: var(--filter-bg);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: all 0.2s ease-in-out;
   }
-  
-  /* .filter-container:hover {
-    background-color: #ddd;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  } */
-  
+  .filter-container label{
+    color: var(--black-txt-color);
+  }
   .filter-container select,
   .filter-container input[type="number"] {
     border: none;
@@ -254,9 +254,9 @@ box-icon{
     padding: 0.5rem 1rem;
     font-size: 1rem;
     border-radius: 3px;
-    background-color: #fff;
+    background-color: var(--white);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s ease-in-out;
   }
   .filter-container input[type="number"]{
     width: 10vw;
@@ -267,6 +267,10 @@ box-icon{
     border: 1px solid #ccc;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
   }
+
+.product Link box-icon{
+  color: var(--primary-button-color);
+}
 
 @media only screen and (max-width: 1200px) {
     .App{

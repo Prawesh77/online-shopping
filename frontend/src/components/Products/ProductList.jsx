@@ -51,7 +51,7 @@ const ProductList = () => {
 
 
   return (
-    <div>
+    <div className="product">
       {status === "loading" && <div>Loading...</div>}
       {status === "failed" && <div>{error}</div>}
       {status === "succeeded" && (
@@ -82,7 +82,7 @@ const ProductList = () => {
       )}
       {isLoggedIn && isAdmin && (
         <Link to="/products/addnewproduct">
-          <box-icon type="solid" name="plus-circle" size="lg" color="green" />
+          <box-icon type="solid" name="plus-circle" size="lg" color="#007bff" />
         </Link>
       )}
     </div>
