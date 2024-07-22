@@ -16,6 +16,7 @@ import OrderSummaryProfile from './Profile/OrderSummaryProfile';
 import OrderStatus from './Profile/OrderStatus';
 import BargainAdmin from './Profile/BargainAdmin';
 import BargainUser from './Profile/BargainUser';
+import ProductProfile from './Products/ProductProfile';
 
 const App = () => {
   const userID = useSelector((state) => state.user.userid);
@@ -76,7 +77,8 @@ const App = () => {
             <Route path="/profile/orders" element={<OrderStatus />} />
             <Route path="/cart" element={<Cart/>} />
 
-            <Route path="/profile/bargainuser" element={<BargainUser/>} />        
+            <Route path="/profile/bargainuser" element={<BargainUser/>} />  
+            <Route path="/product/profile" element={<ProductProfile/>} />      
           </Routes>
       </Router>
     </>

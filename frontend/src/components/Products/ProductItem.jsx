@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import '../../css/Product.css';
 import PropTypes from 'prop-types'
 import { addToCartAsync } from '../../redux/CartSlice/cartSlice';
+// import ProductProfile from './ProductProfile';
+import { Link } from 'react-router-dom';
 
 
 function ProductItem({ product }){
@@ -25,38 +27,42 @@ function ProductItem({ product }){
     }
     
   }
-    return(
-      <div className="maincomp" >
-            
-           {isLoggedIn && 
-           <i className="bx bx-cart-add cart" onClick={()=>handleCartClick(product.instock)}></i>
-            }
-            <img
-              src={`http://localhost:5000/public${product.imageurl}`}
-              alt="electra 3 pin top"
-              className="product_img"
-            />
-            <p className="product_name">{product.details.name}</p>
-            <div className="seccomp">
-              <div className="lists">
-                <ul>
-                  <li>{product.details.brand}</li>
+    return(   
+      
+      <div className="product-card">
+      {isLoggedIn && 
+        <i 
+          className="bx bx-cart-add cart-icon" 
+          onClick={() => handleCartClick(product.instock)} 
+          role="button" 
+          aria-label="Add to cart"
+        ></i>
+      }
+      <Link to="/product/profile"> 
+        <img
+          src={`http://localhost:5000/public${product.imageurl}`}
+          alt={product.details.name || "Product Image"}
+          className="product-img"
+        />
+      
+        <p className="product-name">{product.details.name}</p>
+      </Link> 
+      <div className="product-details">
+        <ul className="product-info-list">
+          <li className="product-brand">{product.details.brand}</li>
+          {product.details.size && <li className="product-size">Size: {product.details.size}</li>}
+          {product.details.watt && <li className="product-watt">Wattage: {product.details.watt}</li>}
+          <li className="product-stock">
+            {product.instock > 0 ? `In stock: ${product.instock} left` : 'Out of stock'}
+          </li>
+        </ul>
+        <div className="product-price">Rs {product.details.price}</div>
+      </div>
+    </div>
 
-                  {product.details.size && ( // yelai bhanxa Concise conditional rendering
-                    <li>{product.details.size}</li>
-                  )}
-
-                  {product.details.watt && ( // Concise conditional rendering
-                    <li>{product.details.watt}</li>
-                  )}
-                   {product.instock > 0 ? <li>instock: {product.instock} left</li> : <li>out of stock</li>}
-                  
-                </ul>
-              </div>
-              <div className="price">Rs {product.details.price}</div>
-            </div>
-          </div>  
-      );
+    
+    
+    );
 }
 ProductItem.propTypes = {
   keyy: PropTypes.string,

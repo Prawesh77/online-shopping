@@ -126,13 +126,13 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getOrderStatusByIdAsync } from '../../redux/OrderSlice/orderSlice';
-import '../../css/OrderStatus.css'; // Import CSS file for styling
+import '../../css/OrderStatus.css';
 
 const OrderStatus = () => {
   const userID = useSelector((state) => state.user.userid);
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true); // Loading state
-  const [orders, setOrders] = useState([]); // State to hold order data
+  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     if (userID) {
@@ -142,11 +142,11 @@ const OrderStatus = () => {
           // Extract orders array from response payload
           const ordersData = response.payload;
           setOrders(ordersData);
-          setLoading(false); // Set loading to false after fetching data
+          setLoading(false);
         })
         .catch((error) => {
           console.error('Error fetching order status:', error);
-          setLoading(false); // Set loading to false on error as well
+          setLoading(false);
         });
     }
   }, [dispatch, userID]);
@@ -173,12 +173,14 @@ const OrderStatus = () => {
   };
 
   // Filter orders based on selected statuses
+  //selectedStatuses[order.status], orders ko order bhitra status ra selectedStatuses check garera compare 
+  // order.status maa accepted hola, then it checks if accepted is true in selectedStatuses, if true add it to filteredOrders
   const filteredOrders = Array.isArray(orders)
-    ? orders.filter((order) => selectedStatuses[order.status])
+    ? orders.filter((order) => selectedStatuses[order.status])    
     : [];
 
   if (loading) {
-    return <div>Loading...</div>; // Optional: Render a loading indicator
+    return <div>Loading...</div>;
   }
 
   return (

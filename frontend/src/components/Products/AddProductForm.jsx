@@ -1,13 +1,15 @@
-
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { addProduct } from '../../redux/productSlice/productSlice';
-// import { addCategory } from '../../redux/categorySlice';
-import categories from './categories';
+import { addProduct, updateStatusAdd } from '../../redux/productSlice/productSlice';
+import { addCategoryAsync, fetchCategoriesAsync } from '../../redux/categorySlice/categorySlice';
+// import categories from './categories';
 // import categories from '../../data/categories'; // Your existing categories array
 
 const AddProductForm = () => {
+  let status = useSelector((state) => state.product.statusadd);
+  const categories = useSelector((state) => state.categories.categories);
+  console.log(categories);
   const dispatch = useDispatch();
   const [product, setProduct] = useState({
     category: '',
@@ -22,6 +24,10 @@ const AddProductForm = () => {
     instock: '',
     file: {}
   });
+
+  useEffect(() => {
+    dispatch(fetchCategoriesAsync());
+  }, [dispatch]);
 
   const [showAddCategory, setShowAddCategory] = useState(false);
   const [newCategory, setNewCategory] = useState({ value: '', label: '' });
@@ -73,11 +79,10 @@ const AddProductForm = () => {
     formData.append('image', product.file);
 
     try {
-      await dispatch(addProduct(formData));
-      alert(`${product.details.brand}'s ${product.details.name} added successfully`);
+        await dispatch(addProduct(formData));   
     } catch (err) {
-      console.error('Error adding product:', err);
-      alert('Failed to add product');
+        console.error('Error adding product:', err);
+        alert('Failed to add product');
     }
   };
 
@@ -96,7 +101,7 @@ const AddProductForm = () => {
   const handleAddCategorySubmit = async (e) => {
     e.preventDefault();
     try {
-      // await dispatch(addCategory(newCategory));
+      await dispatch(addCategoryAsync(newCategory));
       setShowAddCategory(false);
       setNewCategory({ value: '', label: '' });
     } catch (err) {
@@ -109,6 +114,31 @@ const AddProductForm = () => {
     setShowAddCategory(false);
     setNewCategory({ value: '', label: '' });
   };
+
+  useEffect(() => {
+    console.log("Inside useEffect");
+    console.log(status === 'succeeded');
+    if (status === 'succeeded') {
+      dispatch(updateStatusAdd('idle'));
+      console.log('Product added successfully');
+      alert(`${product.details.brand}'s ${product.details.name} added successfully`);
+      setProduct({
+        category: '',
+        details: {
+          name: '',
+          brand: '',
+          price: '',
+          size: '',
+          watt: '',
+          description: '',
+        },
+        instock: '',
+        file: {}
+      });
+   } else if (status === 'failed') {
+      alert("Product cannot be added");
+    }
+   }, [status,product.details.brand, product.details.name]);
 
   return (
     <div className="add-product-form">

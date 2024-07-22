@@ -109,6 +109,7 @@ const handleSubmit = async (e) => {
             placeholder="username"
             name="userName"
             onChange={handleChange}
+            required
           />
           <br />
           <input

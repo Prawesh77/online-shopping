@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import  "../../css/Order.css";
@@ -7,6 +7,8 @@ import { placeOrderAsync } from '../../redux/OrderSlice/orderSlice';
 const Order = (props) => {
   const { productId, toggleOrder } = props;
 console.log(productId);
+const status = useSelector((state) => state.order.status);
+
 const dispatch = useDispatch();
   //userid,, order[{productId, quantity,deliveryAddress{fullName, address, contactNo, city, state}}]
 const userID = useSelector((state) => state.user.userid);
@@ -67,17 +69,27 @@ const userID = useSelector((state) => state.user.userid);
         e.preventDefault();
         const parsedQuantity = parseInt(orderFormData.order.quantity, 10);
 
-  const updatedOrderData = {
-    ...orderFormData,
-    order: {
-      ...orderFormData.order,
-      quantity: parsedQuantity,
-    },
-  };
-        console.log('Form Data Submitted:', updatedOrderData);
+        const updatedOrderData = {
+            ...orderFormData,
+            order: {
+            ...orderFormData.order,
+            quantity: parsedQuantity,
+            },
+        };
         dispatch(placeOrderAsync(updatedOrderData));
         console.log("dispatched");
     };
+    
+    useEffect(() => {
+         if (status === 'succeeded') {
+         
+         toggleOrder();
+         console.log('order successfully placed');
+         alert("Order successfully placed");
+        } else if (status === 'failed') {
+         alert("Order cannot be placed");
+         }
+        }, [status, toggleOrder]);
 
     return (
       <div className="order_containerr">

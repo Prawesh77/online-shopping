@@ -11,6 +11,7 @@ const BARGAIN_ORDER_URL = 'http://localhost:5000/order/bargainOrder'  //to set b
 const placeOrder = async (orderData) => {
     console.log(orderData);
     const response = await axios.post(PLACE_ORDER_URL, orderData);
+    console.log(response);
     return response;
   }
   const getOrderById = async (orders) => {

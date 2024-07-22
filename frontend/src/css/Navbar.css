@@ -28,11 +28,15 @@ body {
 .in_navbar {
     display: flex;
     align-items: center;
+    /* justify-content: center; */
 }
 
 .links {
     display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 15px;
+    margin-right: 25px;
 }
 
 .link {
@@ -40,6 +44,9 @@ body {
     color: var(--black-txt-color);
     font-size: 16px;
     transition: color 0.3s;
+}
+.link.product{
+    margin-right: 30px;
 }
 
 .link:hover {
@@ -57,11 +64,13 @@ body {
     display: flex;
     align-items: center;
     position: relative;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px #8a8383;
 }
 
 .navbar .profile-pic{
-    height: 45px;
-    width: 50px;
+    height: 55px;
+    width: 55px;
     object-fit: contain;
     cursor: pointer;
     border-radius: 50%;
@@ -112,7 +121,7 @@ body {
 
 .for-cart {
     position: relative;
-    margin-left: 20px;
+    margin: 0 25px;
 }
 
 .nav-cart {
@@ -137,7 +146,6 @@ body {
 .dark-mode-btn {
     cursor: pointer;
     font-size: 16px;
-    margin-left: 20px;
     padding: 0.5rem 0.5rem;
     border-radius: 10px;
     color: var(--white);

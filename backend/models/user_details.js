@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   userName: { type: String, required: true, unique: true },
   address: { type: String },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String },
   isAdmin: { type: Boolean, default: false },
   imageurl: { type: String },
   orderId: {

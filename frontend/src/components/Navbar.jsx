@@ -124,10 +124,10 @@ const Navbar = () => {
                     Home
                 </Link>
 
-                <Link to="/products" className="link name">
+                <Link to="/products" className="link product">
                     Products
                 </Link>
-                <Link to="/login" className="link login_link">
+                <Link to="/login" className="login_link">
                     Login
                 </Link>
             </div>

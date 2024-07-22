@@ -13,6 +13,7 @@ export const addProduct = createAsyncThunk('product/addProduct', async (newProdu
 const initialState= { 
      products: [],
      status: "idle", 
+     statusadd: "idle",
      error: null 
     }
 const productSlice = createSlice({
@@ -32,6 +33,9 @@ const productSlice = createSlice({
             product.instock -= quantity; // Reduce the stock
         }
     },
+    updateStatusAdd(state, action){
+      state.statusadd = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -47,18 +51,18 @@ const productSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(addProduct.pending, (state) => {
-        state.status = 'adding';
+        state.statusadd = 'adding';
       })
       .addCase(addProduct.fulfilled, (state) => {
-        state.status = 'succeeded';
+        state.statusadd = 'succeeded';
       })
       .addCase(addProduct.rejected, (state, action) => {
-        state.status = 'failed';
+        state.statusadd = 'failed';
         state.error = action.error.message;
       });
   },
 });
-export const { addProductLocal, updateStock} = productSlice.actions;
+export const { addProductLocal, updateStock, updateStatusAdd} = productSlice.actions;
 export default productSlice.reducer;
 
 //add it in fulfilled part of addProduct

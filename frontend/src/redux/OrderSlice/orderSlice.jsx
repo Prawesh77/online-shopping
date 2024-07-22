@@ -11,6 +11,8 @@ export const placeOrderAsync = createAsyncThunk('order/placeOrder',async (orderD
       const response = await orderAPI.placeOrder(orderData);
       console.log(response);
       dispatch(updateStock({ productId: orderData.order.productId, quantity: orderData.order.quantity }));
+      console.log("---------------------------")
+      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -85,22 +87,22 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(getOrderStatusByIdAsync.rejected, (state, action) => {
-        state.status = 'failed';
+        state.orderStatus = 'failed';
         state.error = action.payload;
       })
       .addCase(getOrderStatusByIdAsync.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.orderStatus = 'succeeded';
         state.orderbyid = action.payload;
       })
       .addCase(getAllOrderAsync.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.orderStatus = 'succeeded';
         state.allorder = action.payload;
       })
       .addCase(setOrderStatusAsync.fulfilled, (state) => {
-        state.status = 'succeeded';
+        state.orderStatus = 'succeeded';
       })
       .addCase(bargainOrderAsync.fulfilled, (state) => {
-        state.status = 'succeeded';
+        state.orderStatus = 'succeeded';
       });
   },
 });

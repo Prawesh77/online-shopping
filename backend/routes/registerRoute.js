@@ -23,11 +23,31 @@ app.post('/new-user',upload.single('image'), async (req, res) => {
 
     const imageUrl = req.file ? `/profile/${req.file.filename}` : '';
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ name: { firstName, middleName, lastName }, userName, address, email, password: hashedPassword, imageurl: imageUrl });
+    
     console.log(newUser);
     try {
-        await newUser.save();
-        res.status(201).send('User registered');
+      const existingEmailUser = await User.findOne({ email });
+      if (existingEmailUser) {
+      return res.status(400).send('Email already used');
+      }
+
+      // Check if the username already exists
+      const existingUsernameUser = await User.findOne({ userName });
+      if (existingUsernameUser) {
+      return res.status(400).send('Username already used');
+      }
+      const newUser = new User({ 
+        name: { firstName, middleName, lastName },
+         userName, 
+         address, 
+         email, 
+         password: hashedPassword, 
+         imageurl: imageUrl 
+      });
+
+      await newUser.save();
+      res.status(201).send('User registered');
+      
     } catch (error) {
         res.status(400).send('Error registering user');
     }

@@ -1,11 +1,15 @@
 const express = require("express");
 const app = express.Router();
+const Category = require('../models/category');
 
 app.get('/', async (req, res) => {
+  console.log("GET CALLED");
     try {
-      const categories = await Category.find();
+      const categories = await Category.find().select('-_id -__v');
+      console.log(categories);
       res.json(categories);
     } catch (err) {
+      console.log("error");
       res.status(500).send(err);
     }
   });
@@ -13,9 +17,11 @@ app.get('/', async (req, res) => {
   // Add Category
 app.post('/add-category', async (req, res) => {
     const { value, label } = req.body;
-  
+    console.log(req.body);
+    console.log(".....................");
+    
     try {
-      // Use a case-insensitive regex to check if the category already exists
+      //case-insensitive garayera check garna lai(works or not check garna baki) 
       const existingCategory = await Category.findOne({ 
         value: new RegExp(`^${value}$`, 'i') 
       });
@@ -27,8 +33,13 @@ app.post('/add-category', async (req, res) => {
       // Create and save the new category
       const newCategory = new Category({ value, label });
       await newCategory.save();
-  
-      return res.status(201).json(newCategory);
+
+      const responseCategory = {
+        value: newCategory.value,
+        label: newCategory.label
+      };
+      console.log(responseCategory);
+      return res.status(201).json(responseCategory);
     } catch (err) {
       return res.status(500).json({ message: 'Server error', error: err });
     }

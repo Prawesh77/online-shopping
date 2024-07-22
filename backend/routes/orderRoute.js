@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const User = require('../models/user_details'); // Path to your User model
 const Product = require('../models/product'); // Path to your Product model
 const Order = require('../models/order'); // Path to your Order model
+const product = require('../models/product');
 
 const app = express.Router();
 app.use(express.json()); // For parsing application/json
@@ -500,6 +501,8 @@ app.put('/update-status', async (req, res) => {
       
       // Find the specific product in the order array
       const productOrder = order.order.find(item => item._id.toString() === order_id);
+      console.log(productOrder.quantity);
+      console.log("-----------------");
       console.log(productOrder.productId);
       const productIdObj = new mongoose.Types.ObjectId(productOrder.productId);
       const actualProduct = await Product.findById(productIdObj);
@@ -527,9 +530,14 @@ app.put('/update-status', async (req, res) => {
       if (newStatus.cancelled === true) {
         console.log("newStatus.cancelled === true")
         productOrder.status = 'cancelled';
+
         // Remove the product from the order array
         order.order = order.order.filter(item => item._id.toString() !== order_id);
-  
+
+        //cancelled quantity to add in instock of product
+        actualProduct.instock += productOrder.quantity;
+        await actualProduct.save();
+        
         // If no products are left in the order, remove the entire order document
         if (order.order.length === 0) {
           await Order.findByIdAndDelete(userorderid);

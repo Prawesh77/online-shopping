@@ -1,10 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { fetchCategoriesAsync } from '../../redux/categorySlice/categorySlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Filter = ({ onFilterChange }) => {
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories.categories);
+  console.log(categories);
   const [category, setCategory] = useState('');
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(10000);
+
+  useEffect(() => {
+    dispatch(fetchCategoriesAsync());
+  }, [dispatch]);
+
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
@@ -23,12 +33,13 @@ const Filter = ({ onFilterChange }) => {
 
   return (
     <div className="filter-container">
+      
       <select value={category} onChange={handleCategoryChange}>
-        <option value="">All Categories</option>
-        <option value="3 pin top">3 pin top</option>
-        <option value="2 pin top">2 pin top</option>
-        <option value="LED Bulb">LED Bulb</option>
-        <option value="Tape">Tape</option>
+        {categories.map(category => (
+          <option key={category.value} value={category.value}>
+            {category.label}
+          </option>
+        ))}
       </select>
       <label>Price From:</label>
       <input

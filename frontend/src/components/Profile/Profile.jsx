@@ -15,7 +15,7 @@ const Profile = () => {
     username: userName,
     profilePictureUrl: `http://localhost:5000/public${imageurl}`,
     ordersCompleted: 0,
-    ordersPending: 0,
+    ordersAccepted: 0,
     ordersDispatched: 0,
     totalRevenue: 0.0,
   });
@@ -37,7 +37,7 @@ const Profile = () => {
 
   useEffect(() => {
     const calculateOrderCounts = () => {
-      let pendingCount = 0;
+      let acceptedCount = 0;
       let completedCount = 0;
       let dispatchedCount = 0;
       let totalRevenue = 0;
@@ -50,7 +50,7 @@ const Profile = () => {
           } else if (product.dispatched) {
             dispatchedCount += 1;
           } else {
-            pendingCount += 1;
+            acceptedCount += 1;
           }
         });
       });
@@ -58,7 +58,7 @@ const Profile = () => {
       setAdminData(prevData => ({
         ...prevData,
         ordersCompleted: completedCount,
-        ordersPending: pendingCount,
+        ordersAccepted: acceptedCount,
         ordersDispatched: dispatchedCount,
         totalRevenue,
       }));
@@ -163,8 +163,9 @@ const Profile = () => {
             <Link to="/profile/summary">
               <div className="summary-box">
                 <h3>Orders Summary</h3>
+                <p>Pending(Bargain): <span>{adminData.ordersPending}</span></p>
                 <p>Completed: <span>{adminData.ordersCompleted}</span></p>
-                <p>Pending: <span>{adminData.ordersPending}</span></p>
+                <p>Accepted: <span>{adminData.ordersAccepted}</span></p>
                 <p>Dispatched: <span>{adminData.ordersDispatched}</span></p>
               </div>
             </Link>
