@@ -1,10 +1,10 @@
 # Online-Shopping-with-<b>BARGAINING</b>
 
-Features
--sign up and Login
--Admin and User role with protected routes
--Admin only and User Only role with protected routes from frontend
--Place Order
--<b>Bargaining</b> between user(buyer) and admin(seller)
--Status of your order
+Features<br>
+-sign up and Login<br>
+-Admin and User role with protected routes<br>
+-Admin only and User Only role with protected routes from frontend<br>
+-Place Order<br>
+-<b>Bargaining</b> between user(buyer) and admin(seller)<br>
+-Status of your order<br>
 
